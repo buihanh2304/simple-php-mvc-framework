@@ -19,6 +19,7 @@ class Template
     {
         $user = Core::get('User');
         $plates = new League\Plates\Engine(ROOT . 'templates');
+        $plates->loadExtension(new League\Plates\Extension\Asset(ROOT . 'public', true));
         $plates->addData([
             'site_url'           => SITE_URL,
             'site_path'          => SITE_PATH,

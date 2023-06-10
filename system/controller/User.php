@@ -10,7 +10,8 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 class UserController extends Controller
 {
-    private $userModel;
+    private User $user;
+    private UserModel $userModel;
 
     function __construct()
     {

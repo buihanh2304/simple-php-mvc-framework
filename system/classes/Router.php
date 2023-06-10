@@ -14,10 +14,12 @@ class Router
     private $routes = array();
     private $allowed_methods = array();
     private $pattenMatchers = array(
-        '/{(.*?):number}/'        => '{$1:[0-9]+?}',
-        '/{(.*?):id}/'            => '{$1:[1-9][0-9]*?}',
-        '/{(.*?):word}/'          => '{$1:[a-zA-Z]+?}',
-        '/{(.*?):slug}/'          => '{$1:[a-z0-9-]+?}',
+        '/{:(number|id|word|slug)}/' => '{$1:$1}',
+        '/{(.+?):number}/' => '{$1:[0-9]+?}',
+        '/{(.+?):id}/' => '{$1:[1-9][0-9]*?}',
+        '/{(.+?):word}/' => '{$1:[a-zA-Z]+?}',
+        '/{(.+?):slug}/' => '{$1:[a-z0-9-]+?}',
+        '/{([^:]+?)}/' => '{$1:.+?}',
     );
     private $regex_delimiter = '#';
 
@@ -45,7 +47,7 @@ class Router
         $this->basePath = $basePath;
     }
 
-    public function add($router, $handler = 'Misc@error_404', $methods = 'GET')
+    public function add($router, $handler = 'Home@error_404', $methods = 'GET')
     {
         $patten = $this->__process_router($router);
         $handler = $this->__process_handler($handler);
@@ -89,8 +91,8 @@ class Router
             list($controller, $method) = explode('@', $this->request_params[0]);
             return [
                 'controller' => $controller,
-                'method'     => $method,
-                'params'     => $this->request_params[1]
+                'method' => $method,
+                'params' => $this->request_params[1]
             ];
         }
         return false;
@@ -114,6 +116,8 @@ class Router
 
     private function __process_router($router)
     {
+        $router = $router === '/' ? $router : trim($router, '/');
+
         if (false === mb_strpos($router, '{')) {
             return $router;
         }
@@ -136,15 +140,12 @@ class Router
     private function __process_patten($matches)
     {
         ++$this->pattenIndex;
-        if ($matches[1]) {
-            $this->pattenData[$this->pattenIndex] = '(?<' . $matches[1] . '>' . $matches[2] . ')';
-        } else {
-            $this->pattenData[$this->pattenIndex] = $matches[2];
-        }
+        $this->pattenData[$this->pattenIndex] = '(?<' . $matches[1] . '>' . $matches[2] . ')';
         return '@PID_' . $this->pattenIndex . '@';
     }
 
-    private function __replace_patten($matches) {
+    private function __replace_patten($matches)
+    {
         if (isset($this->pattenData[$matches[1]])) {
             $data = $this->pattenData[$matches[1]];
             unset($this->pattenData[$matches[1]]);

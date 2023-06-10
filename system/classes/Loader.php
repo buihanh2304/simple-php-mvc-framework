@@ -41,6 +41,6 @@ class Loader
             $obj = new $className;
             return $obj;
         }
-        return null;
+        return false;
     }
 }

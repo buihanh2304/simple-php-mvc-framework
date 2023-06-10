@@ -10,8 +10,7 @@ define('_MRKEN_MVC', 1);
 
 require('../system/bootstrap.php');
 
-$request = Core::get('Request');
-
+/** @var Kernel */
 $kernel = Core::get('Kernel');
 
-$kernel->run($request);
+$kernel->run(Core::get('Request'));

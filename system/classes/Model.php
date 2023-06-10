@@ -10,9 +10,9 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 class Model
 {
-    protected $load;
-    protected $db;
-    protected $config;
+    protected Loader $load;
+    protected PDO $db;
+    protected Config $config;
 
     function __construct()
     {

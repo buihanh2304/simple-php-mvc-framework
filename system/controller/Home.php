@@ -12,10 +12,7 @@ class HomeController extends Controller
 {
     public function error_404()
     {
-        $this->view->setTitle('404 Not Found');
-        header('HTTP/1.1 404 Not Found', true, 404);
-        echo $this->view->render('home/error_404');
-        exit;
+        $this->notFound();
     }
 
     public function index()

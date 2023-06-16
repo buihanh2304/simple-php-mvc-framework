@@ -10,14 +10,12 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 class UserController extends Controller
 {
-    private User $user;
     private UserModel $userModel;
 
     function __construct()
     {
         parent::__construct();
         $this->userModel = $this->load->model('User');
-        $this->user = Core::get('User');
     }
 
     public function logout()
@@ -28,7 +26,7 @@ class UserController extends Controller
 
     public function login()
     {
-        if ($this->user->isLogin) {
+        if ($this->auth->isLogin) {
             redirect('/');
         }
         $userLibrary = $this->load->library('User');
@@ -81,7 +79,7 @@ class UserController extends Controller
 
     public function register()
     {
-        if ($this->user->isLogin) {
+        if ($this->auth->isLogin) {
             redirect('/');
         }
         $error = [];

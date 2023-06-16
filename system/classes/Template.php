@@ -17,15 +17,16 @@ class Template
 
     function __construct()
     {
-        $user = Core::get('User');
+        /** @var Auth */
+        $auth = Core::get('Auth');
         $plates = new League\Plates\Engine(ROOT . 'templates');
         $plates->loadExtension(new League\Plates\Extension\Asset(ROOT . 'public', true));
         $plates->addData([
             'site_url'           => SITE_URL,
             'site_path'          => SITE_PATH,
-            'isLogin'            => $user->isLogin,
-            'user'               => $user->data,
-            'rights'             => $user->rights
+            'isLogin'            => $auth->isLogin,
+            'user'               => $auth->data,
+            'rights'             => $auth->rights
         ]);
         // Load extensions
         $this->plates = $plates;

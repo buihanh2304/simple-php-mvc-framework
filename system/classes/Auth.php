@@ -8,7 +8,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 // website: https://vdevs.net
 */
 
-class User
+class Auth
 {
     public $id      = 0;
     public $rights  = 0;

@@ -11,6 +11,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 class Controller
 {
     protected Loader $load;
+    protected Auth $auth;
     protected Request $request;
     protected Config $config;
     protected Template $view;
@@ -18,6 +19,7 @@ class Controller
     function __construct()
     {
         $this->load = new Loader();
+        $this->auth = Core::get('Auth');
         $this->request = Core::get('Request');
         $this->config = Core::get('Config');
         $this->view = $this->load->view();

@@ -8,6 +8,18 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 // website: https://vdevs.net
 */
 
+function config(string $path)
+{
+    $config = Core::get('Config');
+    $paths = explode('.', $path, 2);
+
+    if (isset($paths[1])) {
+        return $config->{$paths[0]}($paths[1]);
+    }
+
+    return $config->{$paths[0]}();
+}
+
 function redirect($uri = '/')
 {
     header('Location: ' . SITE_PATH . $uri);

@@ -15,42 +15,36 @@ class Config
     function __construct()
     {
         $configs = [];
-        foreach (glob(APP . 'configs' . DS . 'autoload' . DS . '?*.php') as $file)
-        {
+
+        foreach (glob(APP . 'configs' . DS . 'autoload' . DS . '?*.php') as $file) {
             $configs = array_merge($configs, include($file));
         }
+
         $this->configs = $configs;
     }
 
     public function __call($name, $arguments)
     {
-        $configs = $this->configs;
-        $count = count($arguments);
-        switch ($count) {
-            case 2:
-                if (is_string($arguments[0]) && (is_string($arguments[1]) || is_int($arguments[1]))) {
-                    if (isset($configs[$name][$arguments[0]][$arguments[1]])) {
-                        return $configs[$name][$arguments[0]][$arguments[1]];
-                    }
-                }
-                break;
-            case 1:
-                if (is_string($arguments[0])) {
-                    if (isset($configs[$name][$arguments[0]])) {
-                        return $configs[$name][$arguments[0]];
-                    }
-                }
-                break;
+        $result = $this->configs[$name];
 
-            case 0:
-                if (isset($configs[$name])) {
-                    return $configs[$name];
-                }
-                break;
+        if (count($arguments)) {
+            $key = $arguments[0];
 
-            default:
-                return null;
+            if (isset($result[$key])) {
+                return $result[$key];
+            }
+
+            $paths = explode('.', (string) $key);
+
+            foreach ($paths as $path) {
+                if (isset($result[$path])) {
+                    $result = $result[$path];
+                } else {
+                    return null;
+                }
+            }
         }
-        return null;
+
+        return $result;
     }
 }

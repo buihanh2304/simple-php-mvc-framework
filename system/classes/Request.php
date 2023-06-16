@@ -18,7 +18,7 @@ class Request
     private $__is_post;
 
     private $__method;
-    private $allowed_methods = array (
+    private $allowed_methods = array(
         'POST',
         'GET',
         'DELETE',
@@ -27,7 +27,7 @@ class Request
     );
 
     private $__flood_chk = 1;
-    private $__flood_interval = 120;
+    private $__flood_interval = 60;
     private $__flood_limit = 60;
 
     function __construct()
@@ -39,7 +39,7 @@ class Request
         $this->__get_user_agent();
         $this->__get_method();
         $this->__detect_post();
-        session_name('MRKEN_BLOG');
+        session_name('K_MVC');
         session_start();
     }
 
@@ -77,10 +77,9 @@ class Request
 
     private function __process_var($type, $value, $default, $substr = 0)
     {
-        switch ($type)
-        {
+        switch ($type) {
             case 'integer':
-                $value = abs(intval($value));
+                $value = intval($value);
                 break;
 
             case 'boolean':
@@ -94,9 +93,11 @@ class Request
             case 'string':
                 $value = preg_replace('/[^\P{C}\n]+/u', '', $value);
                 $value = trim($value);
+
                 if ($substr) {
                     $value = trim(mb_substr($value, 0, 255));
                 }
+
                 break;
 
             default:
@@ -183,7 +184,7 @@ class Request
             if ($pos !== false) {
                 $uri = mb_substr($uri, 0, $pos);
             }
-            return $uri;
+            return $uri === '/' ? $uri : trim($uri, '/');
         }
     }
 
@@ -196,7 +197,7 @@ class Request
     private function __get_ip_via_proxy()
     {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', $_SERVER['HTTP_X_FORWARDED_FOR'], $vars)) {
-            foreach ($vars[0] AS $var) {
+            foreach ($vars[0] as $var) {
                 $ip_via_proxy = ip2long($var);
                 if ($ip_via_proxy && $ip_via_proxy != $this->__ip && !preg_match('#^(10|172\.16|192\.168)\.#', $var)) {
                     $this->__ip_via_proxy = sprintf('%u', $ip_via_proxy);

@@ -10,14 +10,6 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 class HomeController extends Controller
 {
-    private $view;
-
-    function __construct()
-    {
-        parent::__construct();
-        $this->view = $this->load->view();
-    }
-
     public function error_404()
     {
         $this->view->setTitle('404 Not Found');

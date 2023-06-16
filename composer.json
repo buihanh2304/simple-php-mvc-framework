@@ -3,7 +3,6 @@
         "sort-packages": true
     },
     "require": {
-        "league/plates": "3.*",
-        "mobiledetect/mobiledetectlib": "^2.8"
+        "league/plates": "3.*"
     }
 }

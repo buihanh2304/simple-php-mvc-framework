@@ -26,10 +26,6 @@ class UserLibrary
             return 'Địa chỉ email không hợp lệ';
         }
 
-        if ($parts[1] !== 'gmail.com') {
-            return 'Chỉ chấp nhận Gmail';
-        }
-
         return false;
     }
 
@@ -80,9 +76,9 @@ class UserLibrary
         return false;
     }
 
-    public function validatePasswordConfirmation($password, $re_password)
+    public function validatePasswordConfirmation($password, $passwordConfirmation)
     {
-        if ($password !== $re_password) {
+        if ($password !== $passwordConfirmation) {
             return 'Mật khẩu không trùng khớp';
         }
 

@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
         <title><?= (isset($page_title) ? $page_title . ' | ' : '') . config('system.app.name'); ?></title>
         <link href="<?=$site_path?>/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="<?=$site_path?>/css/styles.css" rel="stylesheet" />
+        <link href="<?=$this->asset('/css/styles.css') ?>" rel="stylesheet" />
     </head>
     <body class="has-navbar">
         <header>
@@ -56,7 +56,7 @@
         <footer>
             <div class="container">
                 <div class="row">
-                    <div class="col-12 copyright">Copyright &copy; 2018 by <a href="https://vdevs.net" target="_blank">Mrken</a> &amp; <a href="https://fb.com/vdevs.net" target="_blank">vDevs</a></div>
+                    <div class="col-12 copyright">Copyright &copy; 2018-2023 by <a href="https://vdevs.net" target="_blank">vDevs</a> &amp; <a href="https://github.com/buihanh2304" target="_blank">MrKen</a></div>
                 </div>
             </div>
         </footer>

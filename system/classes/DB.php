@@ -3,7 +3,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
@@ -19,11 +19,11 @@ class DB
 
         try {
             $pdo = new PDO('mysql:host=' . $db_host . ';dbname=' . $db_name . ';charset=utf8mb4', $db_user, $db_pass,
-                array (
+                [
                     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                     PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,
-                )
+                ]
             );
         } catch (PDOException $e) {
             echo '<h2>MySQL ERROR: ' . $e->getCode() . '</h2>';

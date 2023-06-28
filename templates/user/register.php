@@ -28,7 +28,7 @@ $this->layout('user/container');
                                 <input type="text" name="captcha" class="form-control" id="inputcaptcha" placeholder="Mã bảo vệ" />
                             </div>
                             <div class="col-6">
-                                <img src="<?=$captchaImage?>" alt="Captcha" />
+                                <img src="<?= captchaSrc() ?>" alt="Captcha" />
                             </div>
                         </div>
                     </div>

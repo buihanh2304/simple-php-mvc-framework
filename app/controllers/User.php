@@ -3,7 +3,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
@@ -29,32 +29,39 @@ class UserController extends Controller
         if ($this->auth->isLogin) {
             redirect('/');
         }
+
         $userLibrary = $this->load->library('User');
         $error = false;
-        $email = $this->request->post_var('email', '');
-        $password = $this->request->post_var('password', '');
-        $remember = $this->request->post_var('remember', 0);
-        if ($this->request->get_method() === 'POST') {
+        $email = $this->request->postVar('email', '');
+        $password = $this->request->postVar('password', '');
+        $remember = $this->request->postVar('remember', 0);
+
+        if ($this->request->getMethod() === 'POST') {
             if (empty($email) || empty($password)) {
                 $error = 'Vui lòng nhập tên tài khoản và mật khẩu';
             } else {
                 $type = (mb_strpos($email, '@') !== false) ? 'email' : 'account';
+
                 switch ($type) {
                     case 'email':
-                        $error = $userLibrary->pre_check_email($email);
+                        $error = $userLibrary->validateEmail($email);
                         break;
 
                     default:
-                        $error = $userLibrary->pre_check_account($email);
+                        $error = $userLibrary->validateAccount($email);
                 }
+
                 if (!$error) {
-                    $error = $userLibrary->pre_check_password($password);
+                    $error = $userLibrary->validatePassword($password);
                 }
+
                 if (!$error) {
-                    $user = $this->userModel->get_user_login($type, $email);
+                    $user = $this->userModel->getForLogin($type, $email);
+
                     if ($user && md5(md5($password)) === $user['password']) {
                         $_SESSION['uid'] = $user['id'];
                         $_SESSION['ups'] = $user['password'];
+
                         if ($remember) {
                             // Save cookie (365 day)
                             setcookie('cuid', base64_encode($user['id']), TIME + 31536000, COOKIE_PATH);
@@ -68,9 +75,9 @@ class UserController extends Controller
             }
         }
 
-        $view = $this->load->view();
-        $view->setTitle('Đăng nhập');
-        echo $view->render('user/login', [
+        $this->view->setTitle('Đăng nhập');
+
+        return $this->view->render('user/login', [
             'error'         => $error,
             'inputEmail'    => _e($email),
             'inputRemember' => $remember
@@ -82,41 +89,52 @@ class UserController extends Controller
         if ($this->auth->isLogin) {
             redirect('/');
         }
+
         $error = [];
-        $captcha = new Captcha;
-        $account = $this->request->post_var('account', '');
-        $password = $this->request->post_var('password', '');
-        $re_password = $this->request->post_var('re_password', '');
-        $email = $this->request->post_var('email', '');
-        if ($this->request->get_method() === 'POST') {
+        $captcha = Container::get(Captcha::class);
+        $account = $this->request->postVar('account', '');
+        $password = $this->request->postVar('password', '');
+        $re_password = $this->request->postVar('re_password', '');
+        $email = $this->request->postVar('email', '');
+
+        if ($this->request->getMethod() === 'POST') {
             $userLibrary = $this->load->library('User');
             // check account
-            $check = $userLibrary->pre_check_account($account);
+            $check = $userLibrary->validateAccount($account);
+
             if ($check) {
                 $error[] = $check;
             }
+
             // check password
-            $check = $userLibrary->pre_check_password($password);
+            $check = $userLibrary->validatePassword($password);
+
             if ($check) {
                 $error[] = $check;
             }
+
             // check repeat password
-            $check = $userLibrary->pre_check_re_password($password, $re_password);
+            $check = $userLibrary->validatePasswordConfirmation($password, $re_password);
+
             if ($check) {
                 $error[] = $check;
             }
+
             // check email
-            $check = $userLibrary->pre_check_email($email);
+            $check = $userLibrary->validateEmail($email);
+
             if ($check) {
                 $error[] = $check;
             }
+
             // check captcha
             if ($captcha->check() !== true) {
                 $error[] = 'Mã bảo vệ không chính xác';
             }
 
             if (!$error) {
-                $check = $this->userModel->check_used_info($account, $email);
+                $check = $this->userModel->checkUsedInfo($account, $email);
+
                 if ($check) {
                     if ($check['email'] === $email) {
                         $error[] = 'Địa chỉ email đã được sử dụng';
@@ -125,6 +143,7 @@ class UserController extends Controller
                     }
                 }
             }
+
             if (!$error) {
                 $user_id = $this->userModel->register($account, $password, $email);
 
@@ -135,13 +154,13 @@ class UserController extends Controller
                 $error = display_error($error);
             }
         }
-        $view = $this->load->view();
-        $view->setTitle('Đăng ký');
-        echo $view->render('user/register', [
+
+        $this->view->setTitle('Đăng ký');
+
+        return $this->view->render('user/register', [
             'error'        => $error,
             'inputAccount' => _e($account),
             'inputEmail'   => _e($email),
-            'captchaImage' => $captcha->generateImage()
         ]);
 
     }

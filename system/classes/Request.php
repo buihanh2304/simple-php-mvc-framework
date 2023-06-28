@@ -3,79 +3,82 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
 
 class Request
 {
-    private $__ip;
-    private $__ip_via_proxy = 0;
-    private $__ip_list = array();
-    private $__user_agent;
-    private $__is_ajax;
-    private $__is_post;
+    private $ip;
+    private $ipViaProxy = 0;
+    private $ipList = [];
+    private $userAgent;
+    private $isAjax;
+    private $isPost;
 
-    private $__method;
-    private $allowed_methods = array(
+    private $requestMethod;
+    private $allowedMethods = [
         'POST',
         'GET',
         'DELETE',
         'PUT',
-        'HEAD'
-    );
+        'HEAD',
+    ];
 
-    private $__flood_chk = 1;
-    private $__flood_interval = 60;
-    private $__flood_limit = 60;
+    private $floodCheck = 1;
+    private $floodInterval = 60;
+    private $floodLimit = 60;
 
-    function __construct()
+    public function __construct()
     {
-        $this->__get_ip();
-        $this->__detect_ajax();
-        $this->__ip_flood();
-        $this->__get_ip_via_proxy();
-        $this->__get_user_agent();
-        $this->__get_method();
-        $this->__detect_post();
+        $this->processIp();
+        $this->detectAjax();
+        $this->ipFlood();
+        $this->processIpViaProxy();
+        $this->processUserAgent();
+        $this->processMethod();
+        $this->detectPost();
+
         session_name('K_MVC');
         session_start();
     }
 
-    public function isset_post($name)
+    public function issetPost($name)
     {
         return isset($_POST[$name]) ? true : false;
     }
 
-    public function isset_get($name)
+    public function issetGet($name)
     {
         return isset($_GET[$name]) ? true : false;
     }
 
-    public function get_var($name, $default = '')
+    public function getVar($name, $default = '')
     {
         $value = '';
         if (isset($_GET[$name])) {
-            $value = $this->__process_var(gettype($default), $_GET[$name], $default);
+            $value = $this->processVar(gettype($default), $_GET[$name], $default);
         } else {
             $value = $default;
         }
         return $value;
     }
 
-    public function post_var($name, $default = '', $substr = 0)
+    public function postVar($name, $default = '', $substr = 0)
     {
         $value = '';
+
         if (isset($_POST[$name])) {
-            $value = $this->__process_var(gettype($default), $_POST[$name], $default, $substr = 0);
+            $value = $this->processVar(gettype($default), $_POST[$name], $default, $substr = 0);
         } else {
             $value = $default;
         }
+
         return $value;
     }
 
-    private function __process_var($type, $value, $default, $substr = 0)
+    private function processVar($type, $value, $default, $substr = 0)
     {
         switch ($type) {
             case 'integer':
@@ -103,153 +106,172 @@ class Request
             default:
                 $value = '';
         }
+
         return $value;
     }
 
-    public function get_ip()
+    public function getIp()
     {
-        return $this->__ip;
+        return $this->ip;
     }
 
-    public function get_ip_via_proxy()
+    public function getIpViaProxy()
     {
-        return $this->__ip_via_proxy;
+        return $this->ipViaProxy;
     }
 
-    public function get_user_agent()
+    public function getUserAgent()
     {
-        return $this->__user_agent;
+        return $this->userAgent;
     }
 
-    public function get_ip_list()
+    public function getIpList()
     {
-        return $this->__ip_list;
+        return $this->ipList;
     }
 
-    public function is_ajax()
+    public function isAjax()
     {
-        return $this->__is_ajax;
+        return $this->isAjax;
     }
 
-    public function get_allowed_methods()
+    public function getAllowedMethods()
     {
-        return $this->allowed_methods;
+        return $this->allowedMethods;
     }
 
-    public function get_method()
+    public function getMethod()
     {
-        return $this->__method;
+        return $this->requestMethod;
     }
 
-    public function is_post()
+    public function isPost()
     {
-        return $this->__is_post;
+        return $this->isPost;
     }
 
-    public function check_method($method = 'GET')
+    public function checkMethod($method = 'GET')
     {
-        return ($method === $this->get_method());
+        return mb_strtoupper($method) === $this->getMethod();
     }
 
-    private function __get_method()
+    private function processMethod()
     {
         if (isset($_SERVER['REQUEST_METHOD'])) {
             $method = mb_strtoupper(trim($_SERVER['REQUEST_METHOD']));
+
             if ($method === 'POST' && isset($_SERVER['HTTP_X_METHOD'])) {
                 $method = mb_strtoupper(trim($_SERVER['HTTP_X_METHOD']));
             }
-            if (in_array($method, $this->allowed_methods)) {
-                return ($this->__method = $method);
+
+            if (in_array($method, $this->allowedMethods)) {
+                $this->requestMethod = $method;
+
+                return;
             }
         }
+
         die('Error: request method is not allowed!');
     }
 
-    private function __detect_ajax()
+    private function detectAjax()
     {
         $header = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? mb_strtolower(trim($_SERVER['HTTP_X_REQUESTED_WITH'])) : '';
-        $this->__is_ajax = ($header === 'xmlhttprequest');
+        $this->isAjax = ($header === 'xmlhttprequest');
     }
 
-    private function __detect_post()
+    private function detectPost()
     {
-        $this->__is_post = ('POST' === $this->get_method());
+        $this->isPost = ('POST' === $this->getMethod());
     }
 
-    public function get_route()
+    public function getRoute()
     {
         if (isset($_SERVER['REQUEST_URI'])) {
             $uri = trim($_SERVER['REQUEST_URI']);
             $pos = mb_strpos($uri, '?');
+
             if ($pos !== false) {
                 $uri = mb_substr($uri, 0, $pos);
             }
+
             return $uri === '/' ? $uri : trim($uri, '/');
         }
     }
 
-    private function __get_ip()
+    private function processIp()
     {
         $ip = ip2long($_SERVER['REMOTE_ADDR']) or die('Invalid IP');
-        $this->__ip = sprintf('%u', $ip);
+        $this->ip = sprintf('%u', $ip);
     }
 
-    private function __get_ip_via_proxy()
+    private function processIpViaProxy()
     {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', $_SERVER['HTTP_X_FORWARDED_FOR'], $vars)) {
             foreach ($vars[0] as $var) {
-                $ip_via_proxy = ip2long($var);
-                if ($ip_via_proxy && $ip_via_proxy != $this->__ip && !preg_match('#^(10|172\.16|192\.168)\.#', $var)) {
-                    $this->__ip_via_proxy = sprintf('%u', $ip_via_proxy);
+                $ipViaProxy = ip2long($var);
+
+                if ($ipViaProxy && $ipViaProxy != $this->ip && !preg_match('#^(10|172\.16|192\.168)\.#', $var)) {
+                    $this->ipViaProxy = sprintf('%u', $ipViaProxy);
+
                     break;
                 }
             }
         }
     }
 
-    private function __get_user_agent()
+    private function processUserAgent()
     {
-
         if (isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']) && strlen(trim($_SERVER['HTTP_X_OPERAMINI_PHONE_UA'])) > 5) {
-            $this->__user_agent = 'Opera Mini: ' . mb_substr(trim($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']), 0, 255);
+            $this->userAgent = 'Opera Mini: ' . mb_substr(trim($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']), 0, 255);
         } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $this->__user_agent = mb_substr(trim($_SERVER['HTTP_USER_AGENT']), 0, 255);
+            $this->userAgent = mb_substr(trim($_SERVER['HTTP_USER_AGENT']), 0, 255);
         } else {
-            $this->__user_agent = 'Not Recognised';
+            $this->userAgent = 'Not Recognised';
         }
     }
 
-    private function __ip_flood()
+    private function ipFlood()
     {
-        if ($this->__flood_chk) {
-            $file = APP . 'files' . DS . 'cache' . DS . 'ip.dat';
-            $tmp = array();
+        if ($this->floodCheck) {
+            $file = SYSTEM . 'files' . DS . 'cache' . DS . 'ip.dat';
+            $tmp = [];
             $requests = 1;
+
             if (file_exists($file)) {
                 $in = fopen($file, 'r+');
             } else {
                 $in = fopen($file, 'w+');
             }
+
             flock($in, LOCK_EX) or die('Cannot flock ANTIFLOOD file.');
+
             while ($block = fread($in, 8)) {
                 $arr = unpack('Lip/Ltime', $block);
-                if ((TIME - $arr['time']) > $this->__flood_interval) {
+
+                if ((TIME - $arr['time']) > $this->floodInterval) {
                     continue;
                 }
-                if ($arr['ip'] == $this->__ip) {
+
+                if ($arr['ip'] == $this->ip) {
                     $requests++;
                 }
+
                 $tmp[] = $arr;
-                $this->__ip_list[] = $arr['ip'];
+                $this->ipList[] = $arr['ip'];
             }
+
             fseek($in, 0);
             ftruncate($in, 0);
+
             for ($i = 0; $i < count($tmp); $i++) {
                 fwrite($in, pack('LL', $tmp[$i]['ip'], $tmp[$i]['time']));
             }
-            fwrite($in, pack('LL', $this->__ip, TIME));
+
+            fwrite($in, pack('LL', $this->ip, TIME));
             fclose($in);
-            if ($requests > $this->__flood_limit) {
+
+            if ($requests > $this->floodLimit) {
                 die('FLOOD: exceeded limit of allowed requests');
             }
         }

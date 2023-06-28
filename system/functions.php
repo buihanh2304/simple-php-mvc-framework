@@ -3,14 +3,14 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
 
 function config(string $path)
 {
-    $config = Core::get('Config');
+    $config = Container::get('Config');
     $paths = explode('.', $path, 2);
 
     if (isset($paths[1])) {
@@ -18,6 +18,21 @@ function config(string $path)
     }
 
     return $config->{$paths[0]}();
+}
+
+function url($path = '', $absulute = true)
+{
+    if ($absulute) {
+        return SITE_URL . '/' . ltrim($path, '/');
+    }
+
+    return (SITE_PATH ? '/' . ltrim(SITE_PATH, '/') : '')
+        . '/' . ltrim($path, '/');
+}
+
+function captchaSrc()
+{
+    return url('captcha') . '?v=' . time();
 }
 
 function redirect($uri = '/')
@@ -29,6 +44,7 @@ function redirect($uri = '/')
 function _e($text)
 {
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
     return trim($text);
 }
 
@@ -41,10 +57,11 @@ function display_error($error)
             $error = '- ' . implode('<br />- ', $error);
         }
     }
+
     return $error;
 }
 
-function pagination($url, &$page, $total, $items_per_page, $suffix = '')
+function pagination($url, &$page, $total, $perPage, $suffix = '')
 {
     $neighbors = 2;
 
@@ -52,12 +69,12 @@ function pagination($url, &$page, $total, $items_per_page, $suffix = '')
         $page = 1;
     }
 
-    if ($total <= $items_per_page) {
+    if ($total <= $perPage) {
         $page = 1;
         return;
     }
 
-    $max_page = ceil($total / $items_per_page);
+    $max_page = ceil($total / $perPage);
 
     if ($page > $max_page) {
         $page = $max_page;
@@ -65,7 +82,7 @@ function pagination($url, &$page, $total, $items_per_page, $suffix = '')
 
     $out = [];
 
-    $base_link = '<li class="page-item"><a class="page-link" href="' . SITE_PATH . strtr($url, array('%' => '%%')) . '%d' . $suffix . '">%s</a></li>';
+    $base_link = '<li class="page-item"><a class="page-link" href="' . SITE_PATH . strtr($url, ['%' => '%%']) . '%d' . $suffix . '">%s</a></li>';
 
     $out[] = $page == 1
         ? '<li class="page-item disabled"><span class="page-link">&laquo;</span></li><li class="page-item disabled"><span class="page-link">&lt;</span></span></li>'

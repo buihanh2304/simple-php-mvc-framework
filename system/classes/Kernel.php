@@ -5,12 +5,12 @@ class Kernel
     public function run(Request $request)
     {
         /** @var Config */
-        $config = Core::get('Config');
+        $config = Container::get('Config');
         /** @var Router */
-        $router = Core::get('Router');
+        $router = Container::get('Router');
 
-        $router->set_allowed_methods($request->get_allowed_methods());
-        $router->set_base_path(SITE_PATH);
+        $router->setAllowedMethods($request->getAllowedMethods());
+        $router->setBasePath(SITE_PATH);
 
         foreach ($config->routes() as $route) {
             $router->add(...$route);
@@ -23,24 +23,38 @@ class Kernel
 
     protected function matchRoute(Request $request, Router $router)
     {
-        $router->match($request->get_method(), $request->get_route());
+        $router->match($request->getMethod(), $request->getRoute());
 
-        $requestParams = $router->get_request_params();
+        $callable = $router->getRequestParams();
 
-        if ($requestParams) {
-            $controllerObj = Core::get('Loader')->controller($requestParams['controller']);
-            if ($controllerObj) {
-                if (method_exists($controllerObj, $requestParams['method'])) {
-                    call_user_func_array(array($controllerObj, $requestParams['method']), $requestParams['params']); exit;
+        if ($callable) {
+            $callback = $callable['callback'];
+            $result = null;
+
+            if (is_array($callback)) {
+                $controllerObj = Container::get('Loader')->controller($callback['controller']);
+
+                if ($controllerObj) {
+                    if (method_exists($controllerObj, $callback['method'])) {
+                        $result = call_user_func_array([$controllerObj, $callback['method']], $callable['params']);
+                    }
                 }
+            } else {
+                $result = call_user_func($callback, ...$callable['params']);
+            }
+
+            if ($result) {
+                echo $result;
+                exit;
             }
         }
 
         if (defined('DEFAULT_CONTROLLER')) {
-            $controllerObj = Core::get('Loader')->controller(DEFAULT_CONTROLLER);
+            $controllerObj = Container::get('Loader')->controller(DEFAULT_CONTROLLER);
             if ($controllerObj) {
-                if (method_exists($controllerObj, 'error_404')) {
-                    call_user_func_array(array($controllerObj, 'error_404'), array()); exit;
+                if (method_exists($controllerObj, 'notFound')) {
+                    call_user_func_array([$controllerObj, 'notFound'], []);
+                    exit;
                 }
             }
         }

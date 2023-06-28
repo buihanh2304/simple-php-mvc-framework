@@ -3,7 +3,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
@@ -19,9 +19,9 @@ class Controller
     function __construct()
     {
         $this->load = new Loader();
-        $this->auth = Core::get('Auth');
-        $this->request = Core::get('Request');
-        $this->config = Core::get('Config');
+        $this->auth = Container::get('Auth');
+        $this->request = Container::get('Request');
+        $this->config = Container::get('Config');
         $this->view = $this->load->view();
     }
 
@@ -30,6 +30,5 @@ class Controller
         $this->view->setTitle('404 Not Found');
         header('HTTP/1.1 404 Not Found', true, 404);
         $this->view->output('home/error_404');
-        exit;
     }
 }

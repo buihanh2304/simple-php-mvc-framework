@@ -1,8 +1,10 @@
 {
+    "version": "1.0.0",
     "config": {
         "sort-packages": true
     },
     "require": {
+        "php": "~8.0.0|~8.1.0",
         "league/plates": "3.*"
     }
 }

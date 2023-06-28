@@ -3,7 +3,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
@@ -13,7 +13,7 @@ class Loader
 
     public function view()
     {
-        $template = Core::get('Template');
+        $template = Container::get('Template');
         return $template;
     }
 

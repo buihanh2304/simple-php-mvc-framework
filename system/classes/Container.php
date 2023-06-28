@@ -3,28 +3,31 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
 
-class Core
+class Container
 {
-    private static $__container = array();
+    private static $instances = [];
 
-    public static function get($name, $params = array())
+    public static function get($name, $params = [])
     {
         if (class_exists($name, true)) {
             $hash = $name . md5(serialize($params));
-            if (!isset(self::$__container[$hash])) {
+
+            if (!isset(self::$instances[$hash])) {
                 $obj = new $name(...$params);
+
                 if (is_callable($obj)) {
-                    self::$__container[$hash] = $obj(...$params);
+                    self::$instances[$hash] = $obj(...$params);
                 } else {
-                    self::$__container[$hash] = $obj;
+                    self::$instances[$hash] = $obj;
                 }
             }
-            return self::$__container[$hash];
+
+            return self::$instances[$hash];
         }
     }
 }

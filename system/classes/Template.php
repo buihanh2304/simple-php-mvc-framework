@@ -3,7 +3,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
@@ -12,22 +12,24 @@ class Template
 {
     private $plates;
 
-    private $global = array();
-    private $data = array();
+    private $global = [];
+    private $data = [];
 
     function __construct()
     {
         /** @var Auth */
-        $auth = Core::get('Auth');
+        $auth = Container::get('Auth');
+
         $plates = new League\Plates\Engine(ROOT . 'templates');
         $plates->loadExtension(new League\Plates\Extension\Asset(ROOT . 'public', true));
         $plates->addData([
             'site_url'           => SITE_URL,
             'site_path'          => SITE_PATH,
             'isLogin'            => $auth->isLogin,
-            'user'               => $auth->data,
+            'user'               => $auth->user,
             'rights'             => $auth->rights
         ]);
+
         // Load extensions
         $this->plates = $plates;
     }
@@ -39,19 +41,20 @@ class Template
 
     public function addGlobal($name, $value = '')
     {
-        $data = $this->__process_data($name, $value);
+        $data = $this->processData($name, $value);
         $this->global = array_merge($this->global, $data);
     }
 
     public function addData($name, $value = '')
     {
-        $data = $this->__process_data($name, $value);
+        $data = $this->processData($name, $value);
         $this->data = array_merge($this->data, $data);
     }
 
-    private function __process_data($name, $value)
+    private function processData($name, $value)
     {
-        $data = array();
+        $data = [];
+
         if (is_array($name)) {
             foreach ($name as $key => $val) {
                 $data[$key] = $val;
@@ -59,10 +62,11 @@ class Template
         } else {
             $data[$name] = $value;
         }
+
         return $data;
     }
 
-    public function render($file, $data = array())
+    public function render($file, $data = [])
     {
         if (!empty($this->global)) {
             $this->plates->addData($this->global);
@@ -72,7 +76,7 @@ class Template
         return $this->plates->render($file, $this->data);
     }
 
-    public function output($file, $data = array())
+    public function output($file, $data = [])
     {
         echo $this->render($file, $data);
     }

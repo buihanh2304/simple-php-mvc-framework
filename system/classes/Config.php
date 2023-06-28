@@ -3,7 +3,7 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 0.2
+// version: 1.0
 // author: MrKen
 // website: https://vdevs.net
 */
@@ -16,7 +16,7 @@ class Config
     {
         $configs = [];
 
-        foreach (glob(APP . 'configs' . DS . 'autoload' . DS . '?*.php') as $file) {
+        foreach (glob(ROOT . 'configs' . DS . 'autoload' . DS . '?*.php') as $file) {
             $configs = array_merge($configs, include($file));
         }
 

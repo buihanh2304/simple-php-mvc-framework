@@ -27,7 +27,7 @@ function config(string $path = null, $default = null)
     return $config->get($path, $default);
 }
 
-function url($path = '', $absulute = true)
+function url(string $path = '', $absulute = true)
 {
     if ($absulute) {
         return SITE_URL . '/' . ltrim($path, '/');
@@ -42,13 +42,13 @@ function captchaSrc()
     return url('captcha') . '?v=' . time();
 }
 
-function redirect($uri = '/')
+function redirect(string $uri = '/')
 {
     header('Location: ' . SITE_PATH . $uri);
     exit;
 }
 
-function _e($text)
+function _e(string $text)
 {
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 

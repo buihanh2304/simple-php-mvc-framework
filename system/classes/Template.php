@@ -24,8 +24,6 @@ class Template
         $plates = new League\Plates\Engine(ROOT . 'templates');
         $plates->loadExtension(new League\Plates\Extension\Asset(ROOT . 'public', true));
         $plates->addData([
-            'site_url'           => SITE_URL,
-            'site_path'          => SITE_PATH,
             'isLogin'            => $auth->isLogin,
             'user'               => $auth->user,
             'rights'             => $auth->rights

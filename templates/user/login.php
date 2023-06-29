@@ -9,7 +9,7 @@ $this->layout('user/container');
 <?php if ($error): ?>
                 <div class="alert alert-warning mb-3"><?=$error?></div>
 <?php endif ?>
-                <form action="<?=$site_path?>/login" method="post" class="mb-2">
+                <form action="<?= url('/login') ?>" method="post" class="mb-2">
                     <div class="form-group">
                         <input type="text" name="email" class="form-control" id="inputEmail" placeholder="Email hoặc tên tài khoản" value="<?=$inputEmail?>" />
                     </div>
@@ -27,8 +27,8 @@ $this->layout('user/container');
                     </div>
                     <button type="submit" class="btn btn-success btn-block">Đăng nhập</button>
                 </form>
-                <p class="text-center"><a href="<?=$site_path?>/register">Chưa có tài khoản? Đăng ký</a></p>
-                <p class="text-center mb-0"><a href="<?=$site_path?>/">Trở lại</a></p>
+                <p class="text-center"><a href="<?= url('/register') ?>">Chưa có tài khoản? Đăng ký</a></p>
+                <p class="text-center mb-0"><a href="<?= url('/') ?>">Trở lại</a></p>
             </div>
         </div>
     </div>

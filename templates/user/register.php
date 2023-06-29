@@ -9,7 +9,7 @@ $this->layout('user/container');
 <?php       if ($error): ?>
                 <div class="alert alert-warning"><?=$error?></div>
 <?php       endif ?>
-                <form action="<?=$site_path?>/register" method="post" class="mb-2">
+                <form action="<?= url('/register') ?>" method="post" class="mb-2">
                     <div class="form-group">
                         <input type="text" name="account" class="form-control" id="inputAccount" placeholder="Tên tài khoản" value="<?=$inputAccount?>" />
                     </div>
@@ -34,8 +34,8 @@ $this->layout('user/container');
                     </div>
                     <button type="submit" class="btn btn-success btn-block">Đăng ký</button>
                 </form>
-                <p class="text-center"><a href="<?=$site_path?>/login">Đã có có tài khoản? Đăng nhập</a></p>
-                <p class="text-center mb-0"><a href="<?=$site_path?>/">Trở lại</a></p>
+                <p class="text-center"><a href="<?= url('/login') ?>">Đã có có tài khoản? Đăng nhập</a></p>
+                <p class="text-center mb-0"><a href="<?= url('/') ?>">Trở lại</a></p>
             </div>
         </div>
     </div>

@@ -19,7 +19,7 @@ class Controller
 
     function __construct()
     {
-        $this->load = new Loader();
+        $this->load = Container::get(Loader::class);
         $this->auth = Container::get('Auth');
         $this->request = Container::get('Request');
         $this->config = Container::get('Config');

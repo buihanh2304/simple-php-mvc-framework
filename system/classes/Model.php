@@ -19,6 +19,6 @@ class Model
     {
         $this->db = Container::get('DB');
         $this->config = Container::get('Config');
-        $this->load = new Loader();
+        $this->load = Container::get(Loader::class);
     }
 }

@@ -1,11 +1,12 @@
 <?php
-defined('_MRKEN_MVC') or die('Access denied!!!');
 
 /*
 // This file is a part of K-MVC
-// version: 1.0
+// version: 1.1.0
 // author: MrKen
 // website: https://vdevs.net
+// github: https://github.com/buihanh2304/simple-php-mvc-framework
+// docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
 class Router

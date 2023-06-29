@@ -9,6 +9,22 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+function _e(string $text)
+{
+    $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
+    return trim($text);
+}
+
+/**
+ * Get src of captcha image
+ *
+ * @return string
+ */
+function captchaSrc()
+{
+    return url('captcha') . '?v=' . time();
+}
 /**
  * Get autoload config
  *
@@ -27,34 +43,6 @@ function config(string $path = null, $default = null)
     return $config->get($path, $default);
 }
 
-function url(string $path = '', $absulute = true)
-{
-    if ($absulute) {
-        return SITE_URL . '/' . ltrim($path, '/');
-    }
-
-    return (SITE_PATH ? '/' . ltrim(SITE_PATH, '/') : '')
-        . '/' . ltrim($path, '/');
-}
-
-function captchaSrc()
-{
-    return url('captcha') . '?v=' . time();
-}
-
-function redirect(string $uri = '/')
-{
-    header('Location: ' . SITE_PATH . $uri);
-    exit;
-}
-
-function _e(string $text)
-{
-    $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
-
-    return trim($text);
-}
-
 function display_error($error)
 {
     if (is_array($error)) {
@@ -68,6 +56,16 @@ function display_error($error)
     return $error;
 }
 
+/**
+ * Generate pagination HTML
+ *
+ * @param string $url
+ * @param int $page
+ * @param int $total
+ * @param int $perPage
+ * @param string $suffix
+ * @return string
+ */
 function pagination($url, &$page, $total, $perPage, $suffix = '')
 {
     $neighbors = 2;
@@ -127,4 +125,30 @@ function pagination($url, &$page, $total, $perPage, $suffix = '')
     }
 
     return '<nav><ul class="pagination justify-content-center text-center mb-0">' . implode('', $out) . '</ul></nav>';
+}
+
+function redirect(string $uri = '/')
+{
+    header('Location: ' . SITE_PATH . $uri);
+    exit;
+}
+
+/**
+ * Get request instance
+ *
+ * @return Request
+ */
+function request()
+{
+    return Container::get(Request::class);
+}
+
+function url(string $path = '', $absulute = true)
+{
+    if ($absulute) {
+        return SITE_URL . '/' . ltrim($path, '/');
+    }
+
+    return (SITE_PATH ? '/' . ltrim(SITE_PATH, '/') : '')
+        . '/' . ltrim($path, '/');
 }

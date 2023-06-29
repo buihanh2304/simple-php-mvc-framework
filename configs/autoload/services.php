@@ -9,7 +9,5 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 */
 
 return [
-    'app' => [
-        'name' => 'K-MVC',
-    ],
+    CaptchaService::class,
 ];

@@ -39,7 +39,7 @@ if (extension_loaded('zlib')) {
 
 // Register Services
 $config = Container::get(Config::class);
-$services = $config->services();
+$services = $config->get('services');
 
 foreach ($services as $service) {
     Container::get($service)->register();

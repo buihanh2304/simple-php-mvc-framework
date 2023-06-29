@@ -12,36 +12,38 @@ class Config
 {
     private $configs;
 
-    function __construct()
+    public function __construct()
     {
         $configs = [];
 
         foreach (glob(ROOT . 'configs' . DS . 'autoload' . DS . '?*.php') as $file) {
-            $configs = array_merge($configs, include($file));
+            $configs = array_merge($configs, [
+                basename($file, '.php') => include($file)
+            ]);
         }
 
         $this->configs = $configs;
     }
 
-    public function __call($name, $arguments)
+    public function get($key = null, $default = null)
     {
-        $result = $this->configs[$name];
+        $result = $this->configs;
 
-        if (count($arguments)) {
-            $key = $arguments[0];
+        if (is_null($key)) {
+            return $result;
+        }
 
-            if (isset($result[$key])) {
-                return $result[$key];
-            }
+        if (isset($result[$key])) {
+            return $result[$key];
+        }
 
-            $paths = explode('.', (string) $key);
+        $paths = explode('.', (string) $key);
 
-            foreach ($paths as $path) {
-                if (isset($result[$path])) {
-                    $result = $result[$path];
-                } else {
-                    return null;
-                }
+        foreach ($paths as $path) {
+            if (isset($result[$path])) {
+                $result = $result[$path];
+            } else {
+                return $default;
             }
         }
 

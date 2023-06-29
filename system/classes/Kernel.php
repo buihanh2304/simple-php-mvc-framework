@@ -12,7 +12,7 @@ class Kernel
         $router->setAllowedMethods($request->getAllowedMethods());
         $router->setBasePath(SITE_PATH);
 
-        foreach ($config->routes() as $route) {
+        foreach ($config->get('routes') as $route) {
             $router->add(...$route);
         }
 

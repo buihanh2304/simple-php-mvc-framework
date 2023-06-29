@@ -8,16 +8,22 @@ defined('_MRKEN_MVC') or die('Access denied!!!');
 // website: https://vdevs.net
 */
 
-function config(string $path)
+/**
+ * Get autoload config
+ *
+ * @param string|null $path
+ * @param mixed $default
+ * @return Config|mixed
+ */
+function config(string $path = null, $default = null)
 {
-    $config = Container::get('Config');
-    $paths = explode('.', $path, 2);
+    $config = Container::get(Config::class);
 
-    if (isset($paths[1])) {
-        return $config->{$paths[0]}($paths[1]);
+    if (is_null($path)) {
+        return $config;
     }
 
-    return $config->{$paths[0]}();
+    return $config->get($path, $default);
 }
 
 function url($path = '', $absulute = true)

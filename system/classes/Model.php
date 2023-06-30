@@ -17,8 +17,8 @@ class Model
 
     function __construct()
     {
-        $this->db = Container::get('DB');
-        $this->config = Container::get('Config');
+        $this->db = Container::get(DB::class);
+        $this->config = Container::get(Config::class);
         $this->load = Container::get(Loader::class);
     }
 }

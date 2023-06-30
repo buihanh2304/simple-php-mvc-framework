@@ -19,7 +19,7 @@ class Template
     function __construct()
     {
         /** @var Auth */
-        $auth = Container::get('Auth');
+        $auth = Container::get(Auth::class);
 
         $plates = new League\Plates\Engine(ROOT . 'templates');
         $plates->loadExtension(new League\Plates\Extension\Asset(ROOT . 'public', true));
@@ -31,6 +31,11 @@ class Template
 
         // Load extensions
         $this->plates = $plates;
+    }
+
+    public function getEngine()
+    {
+        return $this->plates;
     }
 
     public function setTitle($title)

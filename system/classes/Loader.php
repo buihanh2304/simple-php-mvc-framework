@@ -14,7 +14,7 @@ class Loader
 
     public function view()
     {
-        $template = Container::get('Template');
+        $template = Container::get(Template::class);
         return $template;
     }
 

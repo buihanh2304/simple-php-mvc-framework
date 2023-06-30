@@ -50,7 +50,7 @@ class Captcha
 
     public function check($name = 'captcha')
     {
-        $request = Container::get('Request');
+        $request = Container::get(Request::class);
         $code = isset($_SESSION['code']) ? trim($_SESSION['code']) : '';
         $captcha = $request->postVar($name, '');
 

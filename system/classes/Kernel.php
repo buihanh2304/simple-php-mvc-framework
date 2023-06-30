@@ -4,17 +4,11 @@ class Kernel
 {
     public function run(Request $request)
     {
-        /** @var Config */
-        $config = Container::get('Config');
         /** @var Router */
-        $router = Container::get('Router');
+        $router = Container::get(Router::class);
 
         $router->setAllowedMethods($request->getAllowedMethods());
         $router->setBasePath(SITE_PATH);
-
-        foreach ($config->get('routes') as $route) {
-            $router->add(...$route);
-        }
 
         $this->matchRoute($request, $router);
 
@@ -32,7 +26,7 @@ class Kernel
             $result = null;
 
             if (is_array($callback)) {
-                $controllerObj = Container::get('Loader')->controller($callback['controller']);
+                $controllerObj = Container::get($callback['controller']);
 
                 if ($controllerObj) {
                     if (method_exists($controllerObj, $callback['method'])) {
@@ -44,19 +38,25 @@ class Kernel
             }
 
             if ($result) {
-                echo $result;
+                if (is_array($result)) {
+                    header('Content-Type: application/json');
+                    echo json_encode($result);
+                } else {
+                    echo $result;
+                }
+
                 exit;
             }
         }
+        /** @var Template */
+        $view = Container::get(Template::class);
 
-        if (defined('DEFAULT_CONTROLLER')) {
-            $controllerObj = Container::get('Loader')->controller(DEFAULT_CONTROLLER);
-            if ($controllerObj) {
-                if (method_exists($controllerObj, 'notFound')) {
-                    call_user_func_array([$controllerObj, 'notFound'], []);
-                    exit;
-                }
-            }
+        if ($view->getEngine()->exists('404')) {
+            $view->setTitle('404 Not Found');
+            header('HTTP/1.1 404 Not Found', true, 404);
+            $view->output('404');
+
+            exit;
         }
     }
 }

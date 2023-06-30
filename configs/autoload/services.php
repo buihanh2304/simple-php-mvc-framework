@@ -10,5 +10,6 @@
 */
 
 return [
+    RouteService::class,
     CaptchaService::class,
 ];

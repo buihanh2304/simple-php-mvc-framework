@@ -12,8 +12,11 @@
 class Router
 {
     private $basePath = '';
+
     private $routes = [];
+
     private $allowedMethods = [];
+
     private $patternMatchers = [
         '/{:(number|id|word|slug)}/' => '{$1:$1}',
         '/{(.+?):number}/' => '{$1:[0-9]+?}',
@@ -22,12 +25,14 @@ class Router
         '/{(.+?):slug}/' => '{$1:[a-z0-9-]+?}',
         '/{([^:]+?)}/' => '{$1:[^/]+?}',
     ];
-    private $regex_delimiter = '#';
+
+    private $regexDelimiter = '#';
 
     private $patternIndex = 0;
+
     private $patternData = [];
 
-    private $request_params = [];
+    private $requestParams = [];
 
     function __construct($basePath = '', array $allowedMethods = ['GET', 'POST'])
     {
@@ -49,7 +54,7 @@ class Router
         $this->basePath = $basePath;
     }
 
-    public function add($router, $handler = 'Home@notFound', $methods = 'GET')
+    public function add(string $router, $handler, $methods = 'GET')
     {
         $pattern = $this->processRouter($router);
         $handler = $this->processHandler($handler);
@@ -64,20 +69,20 @@ class Router
     {
         if ($this->basePath) {
             $route = preg_replace(
-                $this->regex_delimiter . '^' . preg_quote($this->basePath, $this->regex_delimiter) . $this->regex_delimiter,
+                $this->regexDelimiter . '^' . preg_quote($this->basePath, $this->regexDelimiter) . $this->regexDelimiter,
                 '',
                 $route
             );
         }
 
         if (isset($this->routes[$method][$route])) {
-            $this->request_params = [$this->routes[$method][$route], []];
+            $this->requestParams = [$this->routes[$method][$route], []];
 
             return;
         }
 
         foreach ($this->routes[$method] as $key => $value) {
-            if (false !== mb_strpos($key, $this->regex_delimiter)) {
+            if (false !== mb_strpos($key, $this->regexDelimiter)) {
                 if (preg_match($key, $route, $matches)) {
                     foreach ($matches as $k => $v) {
                         if (is_int($k)) {
@@ -85,7 +90,7 @@ class Router
                         }
                     }
 
-                    $this->request_params = [$value, $matches];
+                    $this->requestParams = [$value, $matches];
 
                     break;
                 }
@@ -95,17 +100,22 @@ class Router
 
     public function getRequestParams()
     {
-        if ($this->request_params) {
-            if (is_callable($this->request_params[0])) {
-                $callback = $this->request_params[0];
+        if ($this->requestParams) {
+            if (is_callable($this->requestParams[0])) {
+                $callback = $this->requestParams[0];
             } else {
-                list($controller, $method) = explode('@', $this->request_params[0]);
+                if (is_array($this->requestParams[0])) {
+                    list($controller, $method) = $this->requestParams[0];
+                } else {
+                    list($controller, $method) = explode('@', $this->requestParams[0]);
+                }
+
                 $callback = compact('controller', 'method');
             }
 
             return [
                 'callback' => $callback,
-                'params' => $this->request_params[1]
+                'params' => $this->requestParams[1]
             ];
         }
 
@@ -121,7 +131,7 @@ class Router
         }
 
         $return = [];
-        $methods = explode('|', mb_strtoupper($methods));
+        $methods = is_array($methods) ? array_map('mb_strtoupper', $methods) : explode('|', mb_strtoupper($methods));
 
         foreach ($methods as $method) {
             if (in_array($method, $this->allowedMethods)) {
@@ -142,17 +152,17 @@ class Router
 
         $router = preg_replace(array_keys($this->patternMatchers), array_values($this->patternMatchers), $router);
         $router = preg_replace_callback(
-            $this->regex_delimiter . '{(.*?):(.+?)}' . $this->regex_delimiter,
+            $this->regexDelimiter . '{(.*?):(.+?)}' . $this->regexDelimiter,
             [$this, 'processPattern'],
             $router
         );
-        $router = preg_quote($router, $this->regex_delimiter);
+        $router = preg_quote($router, $this->regexDelimiter);
         $router = preg_replace_callback(
-            $this->regex_delimiter . '@PID_(\d+)@' . $this->regex_delimiter,
+            $this->regexDelimiter . '@PID_(\d+)@' . $this->regexDelimiter,
             [$this, 'replacePattern'],
             $router
         );
-        $router = $this->regex_delimiter . '^' . $router . '$' . $this->regex_delimiter;
+        $router = $this->regexDelimiter . '^' . $router . '$' . $this->regexDelimiter;
 
         return $router;
     }
@@ -177,6 +187,10 @@ class Router
 
     private function processHandler($handler)
     {
+        if (is_callable($handler) || is_array($handler)) {
+            return $handler;
+        }
+
         return $handler;
     }
 }

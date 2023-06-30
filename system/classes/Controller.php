@@ -24,6 +24,6 @@ class Controller
         $this->request = Container::get(Request::class);
         $this->config = Container::get(Config::class);
 
-        $this->view = $this->load->view();
+        $this->view = Container::get(Template::class);
     }
 }

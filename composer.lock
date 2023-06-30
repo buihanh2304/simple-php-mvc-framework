@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b9c74e573896461959e91ca0a2aea13",
+    "content-hash": "2a230395614281cc39fdcb6bc8f3de32",
     "packages": [
         {
             "name": "league/plates",
@@ -77,7 +77,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^8.0"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }

@@ -1,10 +1,13 @@
 {
-    "version": "1.1.1",
+    "name": "buihanh2304/simple-php-mvc-framework",
+    "description": "A simple PHP MVC Framework",
+    "keywords": ["php", "mvc", "framework"],
+    "license": "MIT",
     "config": {
         "sort-packages": true
     },
     "require": {
-        "php": "~8.0.0|~8.1.0",
+        "php": "^8.0",
         "league/plates": "3.*"
     }
 }

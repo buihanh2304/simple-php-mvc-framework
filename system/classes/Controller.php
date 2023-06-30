@@ -20,16 +20,10 @@ class Controller
     function __construct()
     {
         $this->load = Container::get(Loader::class);
-        $this->auth = Container::get('Auth');
-        $this->request = Container::get('Request');
-        $this->config = Container::get('Config');
-        $this->view = $this->load->view();
-    }
+        $this->auth = Container::get(Auth::class);
+        $this->request = Container::get(Request::class);
+        $this->config = Container::get(Config::class);
 
-    public function notFound()
-    {
-        $this->view->setTitle('404 Not Found');
-        header('HTTP/1.1 404 Not Found', true, 404);
-        $this->view->output('home/error_404');
+        $this->view = $this->load->view();
     }
 }

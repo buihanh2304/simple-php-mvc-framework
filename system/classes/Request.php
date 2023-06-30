@@ -71,7 +71,7 @@ class Request
         $value = '';
 
         if (isset($_POST[$name])) {
-            $value = $this->processVar(gettype($default), $_POST[$name], $default, $substr = 0);
+            $value = $this->processVar(gettype($default), $_POST[$name], $default, $substr);
         } else {
             $value = $default;
         }
@@ -202,18 +202,21 @@ class Request
 
     private function processIp()
     {
-        $ip = ip2long($_SERVER['REMOTE_ADDR']) or die('Invalid IP');
-        $this->ip = sprintf('%u', $ip);
+        $this->ip = filter_var($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', FILTER_VALIDATE_IP);
+
+        if ($this->ip === false) {
+            die('Invalid IP');
+        }
     }
 
     private function processIpViaProxy()
     {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', $_SERVER['HTTP_X_FORWARDED_FOR'], $vars)) {
             foreach ($vars[0] as $var) {
-                $ipViaProxy = ip2long($var);
+                $var = filter_var($var ?? '127.0.0.1', FILTER_VALIDATE_IP);
 
-                if ($ipViaProxy && $ipViaProxy != $this->ip && !preg_match('#^(10|172\.16|192\.168)\.#', $var)) {
-                    $this->ipViaProxy = sprintf('%u', $ipViaProxy);
+                if ($var && $var != $this->ip && !preg_match('#^(10|172\.16|192\.168)\.#', $var)) {
+                    $this->ipViaProxy = $var;
 
                     break;
                 }
@@ -223,7 +226,7 @@ class Request
 
     private function processUserAgent()
     {
-        if (isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']) && strlen(trim($_SERVER['HTTP_X_OPERAMINI_PHONE_UA'])) > 5) {
+        if (isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']) && mb_strlen(trim($_SERVER['HTTP_X_OPERAMINI_PHONE_UA'])) > 5) {
             $this->userAgent = 'Opera Mini: ' . mb_substr(trim($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']), 0, 255);
         } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
             $this->userAgent = mb_substr(trim($_SERVER['HTTP_USER_AGENT']), 0, 255);

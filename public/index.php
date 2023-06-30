@@ -1,5 +1,4 @@
 <?php
-define('_MVC_START', microtime(true));
 
 /*
 // This file is a part of K-MVC
@@ -10,9 +9,12 @@ define('_MVC_START', microtime(true));
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+
+define('_MVC_START', microtime(true));
+
 require('../system/bootstrap.php');
 
 /** @var Kernel */
-$kernel = Container::get('Kernel');
+$kernel = Container::get(Kernel::class);
 
-$kernel->run(Container::get('Request'));
+$kernel->run(Container::get(Request::class));

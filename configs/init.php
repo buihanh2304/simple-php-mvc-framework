@@ -9,8 +9,6 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
-// default controller
-define('DEFAULT_CONTROLLER', 'Home');
 // URL
 define('SITE_SCHEME', 'http://');
 define('SITE_HOST', 'basic.pro');

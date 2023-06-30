@@ -1,5 +1,5 @@
 <?php
-    $this->layout('home/container');
+    $this->layout('layout');
 ?>
 
 <div class="jumbotron text-center">

@@ -11,18 +11,18 @@
 
 class Auth
 {
-    public $id      = 0;
-    public $rights  = 0;
+    public $id = 0;
+    public $rights = 0;
     public $isLogin = false;
     public $user = [
-        'id'                => 0,
-        'account'           => '',
-        'password'          => '',
-        'email'             => '',
-        'join_date'         => '',
-        'rights'            => 0,
-        'last_login'        => 0,
-        'name'              => '',
+        'id' => 0,
+        'account' => '',
+        'password' => '',
+        'email' => '',
+        'join_date' => '',
+        'rights' => 0,
+        'last_login' => 0,
+        'name' => '',
     ];
 
     public $settings;
@@ -31,7 +31,7 @@ class Auth
 
     public function __construct()
     {
-        $this->db = Container::get('DB');
+        $this->db = Container::get(DB::class);
         $this->authorize();
     }
 

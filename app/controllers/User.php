@@ -12,11 +12,13 @@
 class UserController extends Controller
 {
     private UserModel $userModel;
+    private UserLibrary $userLibrary;
 
     function __construct()
     {
         parent::__construct();
         $this->userModel = $this->load->model('User');
+        $this->userLibrary = $this->load->library('User');
     }
 
     public function logout()
@@ -31,7 +33,6 @@ class UserController extends Controller
             redirect('/');
         }
 
-        $userLibrary = $this->load->library('User');
         $error = false;
         $email = $this->request->postVar('email', '');
         $password = $this->request->postVar('password', '');
@@ -45,15 +46,15 @@ class UserController extends Controller
 
                 switch ($type) {
                     case 'email':
-                        $error = $userLibrary->validateEmail($email);
+                        $error = $this->userLibrary->validateEmail($email);
                         break;
 
                     default:
-                        $error = $userLibrary->validateAccount($email);
+                        $error = $this->userLibrary->validateAccount($email);
                 }
 
                 if (!$error) {
-                    $error = $userLibrary->validatePassword($password);
+                    $error = $this->userLibrary->validatePassword($password);
                 }
 
                 if (!$error) {
@@ -99,30 +100,29 @@ class UserController extends Controller
         $email = $this->request->postVar('email', '');
 
         if ($this->request->getMethod() === 'POST') {
-            $userLibrary = $this->load->library('User');
             // check account
-            $check = $userLibrary->validateAccount($account);
+            $check = $this->userLibrary->validateAccount($account);
 
             if ($check) {
                 $error[] = $check;
             }
 
             // check password
-            $check = $userLibrary->validatePassword($password);
+            $check = $this->userLibrary->validatePassword($password);
 
             if ($check) {
                 $error[] = $check;
             }
 
             // check repeat password
-            $check = $userLibrary->validatePasswordConfirmation($password, $re_password);
+            $check = $this->userLibrary->validatePasswordConfirmation($password, $re_password);
 
             if ($check) {
                 $error[] = $check;
             }
 
             // check email
-            $check = $userLibrary->validateEmail($email);
+            $check = $this->userLibrary->validateEmail($email);
 
             if ($check) {
                 $error[] = $check;

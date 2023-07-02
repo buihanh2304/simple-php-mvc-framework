@@ -14,34 +14,32 @@ class Loader
 
     public function view()
     {
-        $template = Container::get(Template::class);
-        return $template;
+        return $this->load(Template::class);
     }
 
     public function controller($name)
     {
         $className = $name . 'Controller';
+
         return $this->load($className);
     }
 
     public function model($name)
     {
         $className = $name . 'Model';
+
         return $this->load($className);
     }
 
     public function library($name)
     {
         $className = $name . 'Library';
+
         return $this->load($className);
     }
 
     private function load($className)
     {
-        if (class_exists($className, true)) {
-            $obj = new $className;
-            return $obj;
-        }
-        return false;
+        return Container::get($className);
     }
 }

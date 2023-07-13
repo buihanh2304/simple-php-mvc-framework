@@ -21,21 +21,18 @@ class Template
     private $global = [];
     private $data = [];
 
-    function __construct()
+    public function __construct(Auth $auth, Engine $engine)
     {
-        /** @var Auth */
-        $auth = Container::get(Auth::class);
-
-        $plates = new Engine(ROOT . 'templates');
-        $plates->loadExtension(new Asset(ROOT . 'public', true));
-        $plates->addData([
+        $engine->setDirectory(ROOT . 'templates');
+        $engine->loadExtension(new Asset(ROOT . 'public', true));
+        $engine->addData([
             'isLogin'            => $auth->isLogin,
             'user'               => $auth->user,
             'rights'             => $auth->rights
         ]);
 
         // Load extensions
-        $this->plates = $plates;
+        $this->plates = $engine;
     }
 
     public function getEngine(): Engine

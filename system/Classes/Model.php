@@ -18,9 +18,9 @@ class Model
     protected PDO $db;
     protected Config $config;
 
-    function __construct()
+    public function __construct()
     {
-        $this->db = Container::get(DB::class);
-        $this->config = Container::get(Config::class);
+        $this->db = app(DB::class);
+        $this->config = app(Config::class);
     }
 }

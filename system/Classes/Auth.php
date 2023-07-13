@@ -11,6 +11,8 @@
 
 namespace System\Classes;
 
+use PDO;
+
 class Auth
 {
     public $id = 0;
@@ -29,12 +31,8 @@ class Auth
 
     public $settings;
 
-    private $db;
-
-    public function __construct()
+    public function __construct(protected PDO $db)
     {
-        $this->db = Container::get(DB::class);
-
         $this->authorize();
     }
 

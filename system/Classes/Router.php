@@ -38,7 +38,7 @@ class Router
 
     private $requestParams = [];
 
-    function __construct($basePath = '', array $allowedMethods = ['GET', 'POST'])
+    public function __construct($basePath = '', array $allowedMethods = ['GET', 'POST'])
     {
         $this->basePath = $basePath;
         $this->allowedMethods = $allowedMethods;

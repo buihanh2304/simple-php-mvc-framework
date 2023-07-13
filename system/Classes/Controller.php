@@ -16,14 +16,11 @@ class Controller
     protected Auth $auth;
     protected Request $request;
     protected Config $config;
-    protected Template $view;
 
-    function __construct()
+    public function __construct()
     {
-        $this->auth = Container::get(Auth::class);
-        $this->request = Container::get(Request::class);
-        $this->config = Container::get(Config::class);
-
-        $this->view = Container::get(Template::class);
+        $this->auth = app(Auth::class);
+        $this->request = app(Request::class);
+        $this->config = app(Config::class);
     }
 }

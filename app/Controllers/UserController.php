@@ -14,20 +14,15 @@ namespace App\Controllers;
 use App\Services\UserService;
 use App\Models\User;
 use System\Classes\Captcha;
-use System\Classes\Container;
 use System\Classes\Controller;
 
 class UserController extends Controller
 {
-    private User $userModel;
-    private UserService $userService;
-
-    function __construct()
-    {
+    public function __construct(
+        protected User $userModel,
+        protected UserService $userService
+    ) {
         parent::__construct();
-
-        $this->userModel = new User;
-        $this->userService = new UserService;
     }
 
     public function logout()
@@ -86,9 +81,9 @@ class UserController extends Controller
             }
         }
 
-        $this->view->setTitle('Đăng nhập');
+        view()->setTitle('Đăng nhập');
 
-        return $this->view->render('user/login', [
+        return view('user/login', [
             'error'         => $error,
             'inputEmail'    => _e($email),
             'inputRemember' => $remember
@@ -102,7 +97,7 @@ class UserController extends Controller
         }
 
         $error = [];
-        $captcha = Container::get(Captcha::class);
+        $captcha = app(Captcha::class);
         $account = $this->request->postVar('account', '');
         $password = $this->request->postVar('password', '');
         $re_password = $this->request->postVar('re_password', '');
@@ -165,13 +160,12 @@ class UserController extends Controller
             }
         }
 
-        $this->view->setTitle('Đăng ký');
+        view()->setTitle('Đăng ký');
 
-        return $this->view->render('user/register', [
+        return view('user/register', [
             'error'        => $error,
             'inputAccount' => _e($account),
             'inputEmail'   => _e($email),
         ]);
-
     }
 }

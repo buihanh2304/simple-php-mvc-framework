@@ -17,7 +17,10 @@ define('_MVC_START', microtime(true));
 
 require('../system/bootstrap.php');
 
-/** @var Kernel */
-$kernel = Container::get(Kernel::class);
+$container = Container::getInstance();
 
-$kernel->run(Container::get(Request::class));
+/** @var Kernel */
+$kernel = $container->make(Kernel::class);
+$request = $container->make(Request::class);
+
+$kernel->run($request);

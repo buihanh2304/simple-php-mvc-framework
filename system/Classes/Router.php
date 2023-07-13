@@ -9,11 +9,15 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+namespace System\Classes;
+
 class Router
 {
     private $basePath = '';
 
     private $routes = [];
+
+    protected $namespace;
 
     private $allowedMethods = [];
 
@@ -191,6 +195,15 @@ class Router
             return $handler;
         }
 
+        if ($this->namespace) {
+            return $this->namespace . $handler;
+        }
+
         return $handler;
+    }
+
+    public function setNamespace(string $namespace)
+    {
+        $this->namespace = $namespace;
     }
 }

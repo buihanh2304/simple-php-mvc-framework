@@ -9,6 +9,10 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+namespace App\Controllers;
+
+use System\Classes\Controller;
+
 class HomeController extends Controller
 {
     public function index()

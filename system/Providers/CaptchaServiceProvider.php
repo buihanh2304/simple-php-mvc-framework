@@ -1,6 +1,13 @@
 <?php
 
-class CaptchaService implements ServiceInterface
+namespace System\Providers;
+
+use System\Classes\Captcha;
+use System\Classes\Container;
+use System\Classes\Router;
+use System\Interfaces\ServiceProviderInterface;
+
+class CaptchaServiceProvider implements ServiceProviderInterface
 {
     public function register()
     {

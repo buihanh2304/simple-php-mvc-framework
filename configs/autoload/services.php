@@ -9,7 +9,10 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+use App\Providers\RouteServiceProvider;
+use System\Providers\CaptchaServiceProvider;
+
 return [
-    RouteService::class,
-    CaptchaService::class,
+    RouteServiceProvider::class,
+    CaptchaServiceProvider::class,
 ];

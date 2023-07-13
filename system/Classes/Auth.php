@@ -9,6 +9,8 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+namespace System\Classes;
+
 class Auth
 {
     public $id = 0;
@@ -32,6 +34,7 @@ class Auth
     public function __construct()
     {
         $this->db = Container::get(DB::class);
+
         $this->authorize();
     }
 

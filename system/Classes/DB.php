@@ -9,6 +9,11 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+namespace System\Classes;
+
+use PDO;
+use PDOException;
+
 class DB
 {
     public function __invoke()

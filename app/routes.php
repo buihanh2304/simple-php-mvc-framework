@@ -10,6 +10,12 @@
 */
 
 /** @var Router */
+
+use App\Controllers\HomeController;
+use System\Classes\Container;
+use System\Classes\Router;
+use System\Classes\Template;
+
 $router = Container::get(Router::class);
 
 $router->add('/', 'HomeController@index');

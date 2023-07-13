@@ -9,9 +9,14 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+namespace System\Classes;
+
+use League\Plates\Engine;
+use League\Plates\Extension\Asset;
+
 class Template
 {
-    private $plates;
+    private Engine $plates;
 
     private $global = [];
     private $data = [];
@@ -21,8 +26,8 @@ class Template
         /** @var Auth */
         $auth = Container::get(Auth::class);
 
-        $plates = new League\Plates\Engine(ROOT . 'templates');
-        $plates->loadExtension(new League\Plates\Extension\Asset(ROOT . 'public', true));
+        $plates = new Engine(ROOT . 'templates');
+        $plates->loadExtension(new Asset(ROOT . 'public', true));
         $plates->addData([
             'isLogin'            => $auth->isLogin,
             'user'               => $auth->user,
@@ -33,7 +38,7 @@ class Template
         $this->plates = $plates;
     }
 
-    public function getEngine()
+    public function getEngine(): Engine
     {
         return $this->plates;
     }

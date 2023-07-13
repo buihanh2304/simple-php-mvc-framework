@@ -1,5 +1,7 @@
 <?php
 
+namespace System\Classes;
+
 class Kernel
 {
     public function run(Request $request)
@@ -48,6 +50,7 @@ class Kernel
                 exit;
             }
         }
+
         /** @var Template */
         $view = Container::get(Template::class);
 

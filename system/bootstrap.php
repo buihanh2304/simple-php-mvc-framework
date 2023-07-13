@@ -9,6 +9,9 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+use System\Classes\Config;
+use System\Classes\Container;
+
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(dirname(__FILE__)) . DS);
 define('APP', ROOT . 'app' . DS);
@@ -27,11 +30,7 @@ if (version_compare(PHP_VERSION, '8.0', '<')) {
 require(ROOT . 'configs' . DS . 'init.php');
 
 // Autoload
-require(SYSTEM . 'autoload.php');
 require(ROOT . 'vendor' . DS . 'autoload.php');
-
-// global function
-require(SYSTEM . 'functions.php');
 
 if (extension_loaded('zlib')) {
     ini_set('zlib.output_compression', 'On');

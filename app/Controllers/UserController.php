@@ -9,16 +9,25 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+namespace App\Controllers;
+
+use App\Services\UserService;
+use App\Models\User;
+use System\Classes\Captcha;
+use System\Classes\Container;
+use System\Classes\Controller;
+
 class UserController extends Controller
 {
-    private UserModel $userModel;
-    private UserLibrary $userLibrary;
+    private User $userModel;
+    private UserService $userService;
 
     function __construct()
     {
         parent::__construct();
-        $this->userModel = $this->load->model('User');
-        $this->userLibrary = $this->load->library('User');
+
+        $this->userModel = new User;
+        $this->userService = new UserService;
     }
 
     public function logout()
@@ -46,15 +55,15 @@ class UserController extends Controller
 
                 switch ($type) {
                     case 'email':
-                        $error = $this->userLibrary->validateEmail($email);
+                        $error = $this->userService->validateEmail($email);
                         break;
 
                     default:
-                        $error = $this->userLibrary->validateAccount($email);
+                        $error = $this->userService->validateAccount($email);
                 }
 
                 if (!$error) {
-                    $error = $this->userLibrary->validatePassword($password);
+                    $error = $this->userService->validatePassword($password);
                 }
 
                 if (!$error) {
@@ -101,28 +110,28 @@ class UserController extends Controller
 
         if ($this->request->getMethod() === 'POST') {
             // check account
-            $check = $this->userLibrary->validateAccount($account);
+            $check = $this->userService->validateAccount($account);
 
             if ($check) {
                 $error[] = $check;
             }
 
             // check password
-            $check = $this->userLibrary->validatePassword($password);
+            $check = $this->userService->validatePassword($password);
 
             if ($check) {
                 $error[] = $check;
             }
 
             // check repeat password
-            $check = $this->userLibrary->validatePasswordConfirmation($password, $re_password);
+            $check = $this->userService->validatePasswordConfirmation($password, $re_password);
 
             if ($check) {
                 $error[] = $check;
             }
 
             // check email
-            $check = $this->userLibrary->validateEmail($email);
+            $check = $this->userService->validateEmail($email);
 
             if ($check) {
                 $error[] = $check;

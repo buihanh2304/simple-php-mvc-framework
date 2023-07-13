@@ -9,7 +9,9 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
-class UserLibrary
+namespace App\Services;
+
+class UserService
 {
     public function validateEmail($email)
     {

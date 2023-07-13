@@ -1,7 +1,11 @@
 {
     "name": "buihanh2304/simple-php-mvc-framework",
     "description": "A simple PHP MVC Framework",
-    "keywords": ["php", "mvc", "framework"],
+    "keywords": [
+        "php",
+        "mvc",
+        "framework"
+    ],
     "license": "MIT",
     "config": {
         "sort-packages": true
@@ -9,5 +13,14 @@
     "require": {
         "php": "^8.0",
         "league/plates": "3.*"
+    },
+    "autoload": {
+        "files": [
+            "system/functions.php"
+        ],
+        "psr-4": {
+            "App\\": "app/",
+            "System\\": "system/"
+        }
     }
 }

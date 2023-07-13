@@ -9,7 +9,11 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
-class UserModel extends Model
+namespace App\Models;
+
+use System\Classes\Model;
+
+class User extends Model
 {
     public function logout()
     {

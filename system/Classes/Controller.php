@@ -9,16 +9,21 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
-class Model
+namespace System\Classes;
+
+class Controller
 {
-    protected Loader $load;
-    protected PDO $db;
+    protected Auth $auth;
+    protected Request $request;
     protected Config $config;
+    protected Template $view;
 
     function __construct()
     {
-        $this->db = Container::get(DB::class);
+        $this->auth = Container::get(Auth::class);
+        $this->request = Container::get(Request::class);
         $this->config = Container::get(Config::class);
-        $this->load = Container::get(Loader::class);
+
+        $this->view = Container::get(Template::class);
     }
 }

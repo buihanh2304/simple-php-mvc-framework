@@ -9,6 +9,10 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+use System\Classes\Config;
+use System\Classes\Container;
+use System\Classes\Request;
+
 function _e(string $text)
 {
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');

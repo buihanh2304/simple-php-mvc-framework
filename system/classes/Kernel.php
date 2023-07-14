@@ -4,6 +4,8 @@ class Kernel
 {
     public function run(Request $request)
     {
+        $this->removeHeaders();
+
         /** @var Router */
         $router = Container::get(Router::class);
 
@@ -41,6 +43,10 @@ class Kernel
                 if (is_array($result)) {
                     header('Content-Type: application/json');
                     echo json_encode($result);
+                } elseif ($result instanceof GdImage) {
+                    header('Content-Type: image/png');
+                    imagepng($result);
+                    imagedestroy($result);
                 } else {
                     echo $result;
                 }
@@ -57,6 +63,15 @@ class Kernel
             $view->output('404');
 
             exit;
+        }
+    }
+
+    protected function removeHeaders()
+    {
+        foreach (headers_list() as $header) {
+            if (strpos(strtolower($header), 'x-powered-by:') !== false) {
+                header_remove('x-powered-by');
+            }
         }
     }
 }

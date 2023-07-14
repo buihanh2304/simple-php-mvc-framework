@@ -6,12 +6,11 @@ class CaptchaService implements ServiceInterface
     {
         /** @var Router */
         $router = Container::get(Router::class);
+        /** @var Captcha */
         $captcha = Container::get(Captcha::class);
 
         $router->add('captcha', function () use ($captcha) {
-            header('Content-Type: image/png');
-
-            $captcha->src();
+            return $captcha->generateImage();
         });
     }
 }

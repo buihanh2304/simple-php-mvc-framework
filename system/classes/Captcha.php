@@ -16,24 +16,6 @@ class Captcha
     private $height = 40;
     private $length = 4;
 
-    public function src()
-    {
-        $image = $this->generateImage();
-        imagepng($image);
-        imagedestroy($image);
-    }
-
-    public function base64()
-    {
-        $image = $this->generateImage();
-
-        ob_start();
-        imagepng($image);
-        imagedestroy($image);
-
-        return 'data:image/png;base64,' . base64_encode(ob_get_clean());
-    }
-
     protected function generateCode()
     {
         /* list all possible characters, similar looking characters and vowels have been removed */

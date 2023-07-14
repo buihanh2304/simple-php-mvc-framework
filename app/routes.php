@@ -9,22 +9,14 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
-/** @var Router */
-
 use App\Controllers\HomeController;
-use System\Classes\Container;
-use System\Classes\Router;
-use System\Classes\Template;
 
-$router = Container::get(Router::class);
+/** @var \System\Classes\Router $router */
 
 $router->add('/', 'HomeController@index');
 
 $router->add('/home', function () {
-    /** @var Template */
-    $view = Container::get(Template::class);
-
-    return $view->render('home/main');
+    return view('home/main');
 });
 
 $router->add('/test/1', [HomeController::class, 'index']);

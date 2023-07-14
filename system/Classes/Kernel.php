@@ -2,12 +2,16 @@
 
 namespace System\Classes;
 
+use GdImage;
+
 class Kernel
 {
     public function run(Request $request)
     {
+        $this->removeHeaders();
+
         /** @var Router */
-        $router = Container::get(Router::class);
+        $router = app(Router::class);
 
         $router->setAllowedMethods($request->getAllowedMethods());
         $router->setBasePath(SITE_PATH);
@@ -28,7 +32,7 @@ class Kernel
             $result = null;
 
             if (is_array($callback)) {
-                $controllerObj = Container::get($callback['controller']);
+                $controllerObj = app($callback['controller']);
 
                 if ($controllerObj) {
                     if (method_exists($controllerObj, $callback['method'])) {
@@ -43,6 +47,10 @@ class Kernel
                 if (is_array($result)) {
                     header('Content-Type: application/json');
                     echo json_encode($result);
+                } elseif ($result instanceof GdImage) {
+                    header('Content-Type: image/png');
+                    imagepng($result);
+                    imagedestroy($result);
                 } else {
                     echo $result;
                 }
@@ -51,8 +59,8 @@ class Kernel
             }
         }
 
-        /** @var Template */
-        $view = Container::get(Template::class);
+        /** @var \System\Classes\Template */
+        $view = view();
 
         if ($view->getEngine()->exists('404')) {
             $view->setTitle('404 Not Found');
@@ -60,6 +68,15 @@ class Kernel
             $view->output('404');
 
             exit;
+        }
+    }
+
+    protected function removeHeaders()
+    {
+        foreach (headers_list() as $header) {
+            if (strpos(strtolower($header), 'x-powered-by:') !== false) {
+                header_remove('x-powered-by');
+            }
         }
     }
 }

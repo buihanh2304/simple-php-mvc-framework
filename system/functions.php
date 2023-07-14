@@ -12,12 +12,24 @@
 use System\Classes\Config;
 use System\Classes\Container;
 use System\Classes\Request;
+use System\Classes\Template;
 
 function _e(string $text)
 {
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 
     return trim($text);
+}
+
+function app($abstract = null, array $parameters = [])
+{
+    $container = Container::getInstance();
+
+    if ($abstract) {
+        return $container->make($abstract, $parameters);
+    }
+
+    return $container;
 }
 
 /**
@@ -38,7 +50,7 @@ function captchaSrc()
  */
 function config(string $path = null, $default = null)
 {
-    $config = Container::get(Config::class);
+    $config = app(Config::class);
 
     if (is_null($path)) {
         return $config;
@@ -144,7 +156,7 @@ function redirect(string $uri = '/')
  */
 function request()
 {
-    return Container::get(Request::class);
+    return app(Request::class);
 }
 
 function url(string $path = '', $absulute = true)
@@ -155,4 +167,16 @@ function url(string $path = '', $absulute = true)
 
     return (SITE_PATH ? '/' . ltrim(SITE_PATH, '/') : '')
         . '/' . ltrim($path, '/');
+}
+
+function view(string $template = null, array $data = [])
+{
+    /** @var Template */
+    $view = app(Template::class);
+
+    if (is_null($template)) {
+        return $view;
+    }
+
+    return $view->render($template, $data);
 }

@@ -37,10 +37,14 @@ if (extension_loaded('zlib')) {
     ini_set('zlib.output_compression_level', 3);
 }
 
-// Register Services
-$config = Container::get(Config::class);
-$services = $config->get('services');
+// Register Service Providers
+$container = Container::getInstance();
 
-foreach ($services as $service) {
-    Container::get($service)->register();
+$container->instance(Container::class, $container);
+
+$config = $container->make(Config::class);
+$providers = $config->get('providers');
+
+foreach ($providers as $provider) {
+    $container->make($provider)->register();
 }

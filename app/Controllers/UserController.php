@@ -11,8 +11,8 @@
 
 namespace App\Controllers;
 
-use App\Services\UserService;
 use App\Models\User;
+use App\Services\UserService;
 use System\Classes\Captcha;
 use System\Classes\Controller;
 
@@ -81,13 +81,12 @@ class UserController extends Controller
             }
         }
 
-        view()->setTitle('Đăng nhập');
-
-        return view('user/login', [
-            'error'         => $error,
-            'inputEmail'    => _e($email),
-            'inputRemember' => $remember
-        ]);
+        return view()->setTitle('Đăng nhập')
+            ->render('user/login', [
+                'error'         => $error,
+                'inputEmail'    => _e($email),
+                'inputRemember' => $remember
+            ]);
     }
 
     public function register()
@@ -160,12 +159,11 @@ class UserController extends Controller
             }
         }
 
-        view()->setTitle('Đăng ký');
-
-        return view('user/register', [
-            'error'        => $error,
-            'inputAccount' => _e($account),
-            'inputEmail'   => _e($email),
-        ]);
+        return view()->setTitle('Đăng ký')
+            ->render('user/register', [
+                'error'        => $error,
+                'inputAccount' => _e($account),
+                'inputEmail'   => _e($email),
+            ]);
     }
 }

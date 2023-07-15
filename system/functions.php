@@ -169,6 +169,13 @@ function url(string $path = '', $absulute = true)
         . '/' . ltrim($path, '/');
 }
 
+/**
+ * Get template instance or render a view
+ *
+ * @param string|null $template
+ * @param array $data
+ * @return Template|string
+ */
 function view(string $template = null, array $data = [])
 {
     /** @var Template */

@@ -43,18 +43,24 @@ class Template
     public function setTitle($title)
     {
         $this->addGlobal('page_title', _e($title));
+
+        return $this;
     }
 
     public function addGlobal($name, $value = '')
     {
         $data = $this->processData($name, $value);
         $this->global = array_merge($this->global, $data);
+
+        return $this;
     }
 
     public function addData($name, $value = '')
     {
         $data = $this->processData($name, $value);
         $this->data = array_merge($this->data, $data);
+
+        return $this;
     }
 
     private function processData($name, $value)

@@ -13,7 +13,11 @@ namespace System\Classes;
 
 use Closure;
 use Exception;
+use InvalidArgumentException;
+use ReflectionFunction;
+use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionParameter;
 
 class Container
 {
@@ -170,5 +174,84 @@ class Container
         }
 
         return $name;
+    }
+
+    public function call($callable, array $parameters = [])
+    {
+        if ($callable instanceof Closure) {
+            return $this->callClosure($callable, $parameters);
+        } elseif (is_array($callable)) {
+            if (count($callable) === 2) {
+            } elseif (method_exists($callable[0], '__invoke')) {
+                $callable[1] = '__invoke';
+            } else {
+                throw new InvalidArgumentException('Method not provided.');
+            }
+
+            return $this->callClass($callable, $parameters);
+        }
+    }
+
+    protected function callClosure(Closure $callable, array $parameters = [])
+    {
+        $reflector = new ReflectionFunction($callable);
+
+        $dependencies = $reflector->getParameters();
+        $newParameters = $this->getDependencies($dependencies, $parameters);
+
+        return $reflector->invokeArgs($newParameters);
+    }
+
+    protected function callClass(array $callable, array $parameters = [])
+    {
+        $reflector = new ReflectionMethod($callable[0], $callable[1]);
+
+        $dependencies = $reflector->getParameters();
+        $newParameters = $this->getDependencies($dependencies, $parameters);
+
+        return $reflector->invokeArgs($this->make($callable[0]), $newParameters);
+    }
+
+    /**
+     * Get method dependencies
+     *
+     * @param ReflectionParameter[] $dependencies
+     * @param array $parameters
+     * @return array
+     */
+    protected function getDependencies(array $dependencies, array $parameters)
+    {
+        $newParameters = [];
+
+        foreach ($dependencies as $dependency) {
+            if (array_key_exists($paramName = $dependency->getName(), $parameters)) {
+                $newParameters[] = $parameters[$paramName];
+
+                unset($parameters[$paramName]);
+            } elseif (!is_null($className = $this->getParameterClassName($dependency))) {
+                if (array_key_exists($className, $parameters)) {
+                    $newParameters[] = $parameters[$className];
+
+                    unset($parameters[$className]);
+                } elseif ($dependency->isVariadic()) {
+                    $variadicDependencies = $this->make($className);
+
+                    $newParameters = array_merge(
+                        $newParameters,
+                        is_array($variadicDependencies) ? $variadicDependencies : [$variadicDependencies]
+                    );
+                } else {
+                    $newParameters[] = $this->make($className);
+                }
+            } elseif ($dependency->isDefaultValueAvailable()) {
+                $newParameters[] = $dependency->getDefaultValue();
+            } elseif (!$dependency->isOptional() && !array_key_exists($paramName, $parameters)) {
+                throw new Exception(
+                    "Unable to resolve dependency [{$dependency}] in class {$dependency->getDeclaringClass()->getName()}"
+                );
+            }
+        }
+
+        return array_merge($newParameters, $parameters);
     }
 }

@@ -21,6 +21,13 @@ function _e(string $text)
     return trim($text);
 }
 
+/**
+ * Get container or a class instance
+ *
+ * @param mixed $abstract
+ * @param array $parameters
+ * @return Container|mixed
+ */
 function app($abstract = null, array $parameters = [])
 {
     $container = Container::getInstance();

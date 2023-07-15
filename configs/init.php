@@ -10,17 +10,17 @@
 */
 
 // URL
-define('SITE_SCHEME', 'http://');
-define('SITE_HOST', 'basic.pro');
-define('SITE_PATH', '');
+define('SITE_SCHEME', env('SITE_SCHEME', 'http://'));
+define('SITE_HOST', env('SITE_HOST', 'localhost'));
+define('SITE_PATH', env('SITE_PATH', ''));
 define('SITE_URL', SITE_SCHEME . SITE_HOST . SITE_PATH);
 // Cookie
 define('COOKIE_PATH', '/' . SITE_PATH);
 // Database
-define('DB_HOST', 'mysql');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
-define('DB_NAME', 'basic');
+define('DB_HOST', env('DB_HOST', 'localhost'));
+define('DB_USER', env('DB_USER', 'root'));
+define('DB_PASS', env('DB_PASS', 'root'));
+define('DB_NAME', env('DB_NAME', 'mvc'));
 
 // Time zone
 date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -32,3 +32,9 @@ mb_internal_encoding('UTF-8');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(-1);
+
+
+if (extension_loaded('zlib')) {
+    ini_set('zlib.output_compression', 'On');
+    ini_set('zlib.output_compression_level', 3);
+}

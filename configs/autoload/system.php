@@ -11,6 +11,6 @@
 
 return [
     'app' => [
-        'name' => 'K-MVC',
+        'name' => env('APP_NAME', 'K-MVC'),
     ],
 ];

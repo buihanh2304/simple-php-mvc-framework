@@ -9,8 +9,10 @@
 // docs: https://github.com/buihanh2304/simple-php-mvc-framework/wiki
 */
 
+use Dotenv\Dotenv;
 use System\Classes\Config;
 use System\Classes\Container;
+use System\Classes\Env;
 
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(dirname(__FILE__)) . DS);
@@ -26,16 +28,18 @@ if (version_compare(PHP_VERSION, '8.0', '<')) {
         . '</div>');
 }
 
-// Global config
-require(ROOT . 'configs' . DS . 'init.php');
-
 // Autoload
 require(ROOT . 'vendor' . DS . 'autoload.php');
 
-if (extension_loaded('zlib')) {
-    ini_set('zlib.output_compression', 'On');
-    ini_set('zlib.output_compression_level', 3);
-}
+// Load env
+Dotenv::create(
+    Env::getRepository(),
+    ROOT,
+    '.env'
+)->safeLoad();
+
+// Global config
+require(ROOT . 'configs' . DS . 'init.php');
 
 // Register Service Providers
 $container = Container::getInstance();

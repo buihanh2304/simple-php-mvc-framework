@@ -13,7 +13,8 @@
     "require": {
         "php": "^8.0",
         "ext-gd": "*",
-        "league/plates": "3.*"
+        "league/plates": "3.*",
+        "vlucas/phpdotenv": "^5.5"
     },
     "autoload": {
         "files": [
@@ -23,5 +24,10 @@
             "App\\": "app/",
             "System\\": "system/"
         }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
     }
 }

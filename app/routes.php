@@ -2,7 +2,7 @@
 
 /*
 // This file is a part of K-MVC
-// version: 1.1.0
+// version: 1.x
 // author: MrKen
 // website: https://vdevs.net
 // github: https://github.com/buihanh2304/simple-php-mvc-framework
@@ -15,10 +15,7 @@ $router = Container::get(Router::class);
 $router->add('/', 'HomeController@index');
 
 $router->add('/home', function () {
-    /** @var Template */
-    $view = Container::get(Template::class);
-
-    return $view->render('home/main');
+    return view('home/main');
 });
 
 $router->add('/test/1', [HomeController::class, 'index']);

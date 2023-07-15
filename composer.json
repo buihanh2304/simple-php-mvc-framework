@@ -8,6 +8,7 @@
     },
     "require": {
         "php": "^8.0",
+        "ext-gd": "*",
         "league/plates": "3.*"
     }
 }

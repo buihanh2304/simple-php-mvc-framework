@@ -2,7 +2,7 @@
 
 /*
 // This file is a part of K-MVC
-// version: 1.1.0
+// version: 1.x
 // author: MrKen
 // website: https://vdevs.net
 // github: https://github.com/buihanh2304/simple-php-mvc-framework
@@ -77,13 +77,12 @@ class UserController extends Controller
             }
         }
 
-        $this->view->setTitle('Đăng nhập');
-
-        return $this->view->render('user/login', [
-            'error'         => $error,
-            'inputEmail'    => _e($email),
-            'inputRemember' => $remember
-        ]);
+        return view()->setTitle('Đăng nhập')
+            ->render('user/login', [
+                'error'         => $error,
+                'inputEmail'    => _e($email),
+                'inputRemember' => $remember
+            ]);
     }
 
     public function register()
@@ -156,13 +155,11 @@ class UserController extends Controller
             }
         }
 
-        $this->view->setTitle('Đăng ký');
-
-        return $this->view->render('user/register', [
-            'error'        => $error,
-            'inputAccount' => _e($account),
-            'inputEmail'   => _e($email),
-        ]);
-
+        return view()->setTitle('Đăng ký')
+            ->render('user/register', [
+                'error'        => $error,
+                'inputAccount' => _e($account),
+                'inputEmail'   => _e($email),
+            ]);
     }
 }

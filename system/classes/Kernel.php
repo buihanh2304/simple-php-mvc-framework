@@ -55,7 +55,7 @@ class Kernel
             }
         }
         /** @var Template */
-        $view = Container::get(Template::class);
+        $view = view();
 
         if ($view->getEngine()->exists('404')) {
             $view->setTitle('404 Not Found');

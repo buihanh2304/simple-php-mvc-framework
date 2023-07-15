@@ -2,7 +2,7 @@
 
 /*
 // This file is a part of K-MVC
-// version: 1.1.0
+// version: 1.x
 // author: MrKen
 // website: https://vdevs.net
 // github: https://github.com/buihanh2304/simple-php-mvc-framework
@@ -41,18 +41,24 @@ class Template
     public function setTitle($title)
     {
         $this->addGlobal('page_title', _e($title));
+
+        return $this;
     }
 
     public function addGlobal($name, $value = '')
     {
         $data = $this->processData($name, $value);
         $this->global = array_merge($this->global, $data);
+
+        return $this;
     }
 
     public function addData($name, $value = '')
     {
         $data = $this->processData($name, $value);
         $this->data = array_merge($this->data, $data);
+
+        return $this;
     }
 
     private function processData($name, $value)
@@ -72,9 +78,7 @@ class Template
 
     public function render($file, $data = [])
     {
-        if (!empty($this->global)) {
-            $this->plates->addData($this->global);
-        }
+        $this->plates->addData($this->global);
         $this->data = array_merge($this->data, $data);
 
         return $this->plates->render($file, $this->data);

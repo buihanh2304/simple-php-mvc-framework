@@ -2,7 +2,7 @@
 
 /*
 // This file is a part of K-MVC
-// version: 1.1.0
+// version: 1.x
 // author: MrKen
 // website: https://vdevs.net
 // github: https://github.com/buihanh2304/simple-php-mvc-framework
@@ -151,4 +151,23 @@ function url(string $path = '', $absulute = true)
 
     return (SITE_PATH ? '/' . ltrim(SITE_PATH, '/') : '')
         . '/' . ltrim($path, '/');
+}
+
+/**
+ * Get template instance or render a view
+ *
+ * @param string|null $template
+ * @param array $data
+ * @return Template|string
+ */
+function view(string $template = null, array $data = [])
+{
+    /** @var Template */
+    $view = Container::get(Template::class);
+
+    if (is_null($template)) {
+        return $view;
+    }
+
+    return $view->render($template, $data);
 }

@@ -13,14 +13,5 @@ namespace System\Classes;
 
 class Controller
 {
-    protected Auth $auth;
-    protected Request $request;
-    protected Config $config;
-
-    public function __construct()
-    {
-        $this->auth = app(Auth::class);
-        $this->request = app(Request::class);
-        $this->config = app(Config::class);
-    }
+    //
 }

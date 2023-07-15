@@ -33,8 +33,9 @@ class Request
     private $floodInterval = 60;
     private $floodLimit = 60;
 
-    public function __construct()
-    {
+    public function __construct(
+        protected Auth $auth
+    ) {
         $this->processIp();
         $this->detectAjax();
         $this->ipFlood();
@@ -45,6 +46,11 @@ class Request
 
         session_name('K_MVC');
         session_start();
+    }
+
+    public function user(): Auth
+    {
+        return $this->auth;
     }
 
     public function issetPost($name)

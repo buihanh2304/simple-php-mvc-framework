@@ -29,18 +29,14 @@ class Kernel
 
         if ($callable) {
             $callback = $callable['callback'];
-            $result = null;
 
             if (is_array($callback)) {
-                $controllerObj = app($callback['controller']);
-
-                if ($controllerObj) {
-                    if (method_exists($controllerObj, $callback['method'])) {
-                        $result = call_user_func_array([$controllerObj, $callback['method']], $callable['params']);
-                    }
-                }
+                $result = app()->call([
+                    $callback['controller'],
+                    $callback['method'],
+                ], $callable['params']);
             } else {
-                $result = call_user_func($callback, ...$callable['params']);
+                $result = app()->call($callback, $callable['params']);
             }
 
             if ($result) {

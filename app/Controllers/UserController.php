@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\UserService;
 use System\Classes\Captcha;
 use System\Classes\Controller;
+use System\Classes\Request;
 
 class UserController extends Controller
 {
@@ -22,7 +23,7 @@ class UserController extends Controller
         protected User $userModel,
         protected UserService $userService
     ) {
-        parent::__construct();
+        //
     }
 
     public function logout()
@@ -31,18 +32,18 @@ class UserController extends Controller
         redirect('/');
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        if ($this->auth->isLogin) {
+        if ($request->user()->isLogin) {
             redirect('/');
         }
 
         $error = false;
-        $email = $this->request->postVar('email', '');
-        $password = $this->request->postVar('password', '');
-        $remember = $this->request->postVar('remember', 0);
+        $email = $request->postVar('email', '');
+        $password = $request->postVar('password', '');
+        $remember = $request->postVar('remember', 0);
 
-        if ($this->request->getMethod() === 'POST') {
+        if ($request->getMethod() === 'POST') {
             if (empty($email) || empty($password)) {
                 $error = 'Vui lòng nhập tên tài khoản và mật khẩu';
             } else {
@@ -89,20 +90,20 @@ class UserController extends Controller
             ]);
     }
 
-    public function register()
+    public function register(Request $request)
     {
-        if ($this->auth->isLogin) {
+        if ($request->user()->isLogin) {
             redirect('/');
         }
 
         $error = [];
         $captcha = app(Captcha::class);
-        $account = $this->request->postVar('account', '');
-        $password = $this->request->postVar('password', '');
-        $re_password = $this->request->postVar('re_password', '');
-        $email = $this->request->postVar('email', '');
+        $account = $request->postVar('account', '');
+        $password = $request->postVar('password', '');
+        $re_password = $request->postVar('re_password', '');
+        $email = $request->postVar('email', '');
 
-        if ($this->request->getMethod() === 'POST') {
+        if ($request->getMethod() === 'POST') {
             // check account
             $check = $this->userService->validateAccount($account);
 

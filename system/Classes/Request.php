@@ -33,9 +33,8 @@ class Request
     private $floodInterval = 60;
     private $floodLimit = 60;
 
-    public function __construct(
-        protected Auth $auth
-    ) {
+    public function __construct()
+    {
         $this->processIp();
         $this->detectAjax();
         $this->ipFlood();
@@ -50,7 +49,7 @@ class Request
 
     public function user(): Auth
     {
-        return $this->auth;
+        return app(Auth::class);
     }
 
     public function issetPost($name)

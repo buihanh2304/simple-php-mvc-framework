@@ -32,11 +32,6 @@ require(ROOT . 'vendor' . DS . 'autoload.php');
 // global function
 require(SYSTEM . 'functions.php');
 
-if (extension_loaded('zlib')) {
-    ini_set('zlib.output_compression', 'On');
-    ini_set('zlib.output_compression_level', 3);
-}
-
 // Register Services
 $config = Container::get(Config::class);
 $services = $config->get('services');

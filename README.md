@@ -1,4 +1,4 @@
-# Simple PHP MVC Framework
+# Simple PHP MVC Framework (K-MVC)
 
 
 [Docs](./docs/readme.md)

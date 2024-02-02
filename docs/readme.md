@@ -6,22 +6,22 @@ Welcome to the simple-php-mvc-framework wiki!
 composer create-project buihanh2304/simple-php-mvc-framework
 ```
 
-### 1. [Installation](./1.installation.md)
+### 1. [Installation](./01.installation.md)
 
-### 2. [Router](./2.router.md)
+### 2. [Router](./02.router.md)
 
-### 3. [Controller](./3.controller.md)
+### 3. [Controller](./03.controller.md)
 
-### 4. [Model](./4.model.md)
+### 4. [Model](./04.model.md)
 
-### 5. [Library](./5.library.md)
+### 5. [Service](./05.service.md)
 
-### 6. [Dependency Injection](./6.di.md)
+### 6. [Dependency Injection](./06.di.md)
 
-### 7. [View](./7.view.md)
+### 7. [View](./07.view.md)
 
-### 8. [helpers](./8.helpers.md)
+### 8. [helpers](./08.helpers.md)
 
-### 9. [Container](./9.container.md)
+### 9. [Container](./09.container.md)
 
 ### 10. [Configs](./10.configs.md)

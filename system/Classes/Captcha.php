@@ -1,23 +1,16 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace System\Classes;
 
 class Captcha
 {
-    private $font = 'monofont.ttf';
-    private $width = 96;
-    private $height = 40;
-    private $length = 4;
+    private string $font = 'monofont.ttf';
+    private int $width = 96;
+    private int $height = 40;
+    private int $length = 4;
 
-    protected function generateCode()
+    protected function generateCode(): string
     {
         /* list all possible characters, similar looking characters and vowels have been removed */
         $possible = '23456789abcdeghkmnpqsuvxyz';
@@ -31,7 +24,7 @@ class Captcha
         return $code;
     }
 
-    public function check($name = 'captcha')
+    public function check(string $name = 'captcha'): bool
     {
         $request = app(Request::class);
         $code = isset($_SESSION['code']) ? trim($_SESSION['code']) : '';
@@ -46,7 +39,7 @@ class Captcha
         return false;
     }
 
-    public function generateImage()
+    public function generateImage(): void
     {
         $font = SYSTEM . 'files' . DS . 'fonts' . DS . $this->font;
         $code = $this->generateCode();
@@ -70,12 +63,13 @@ class Captcha
 
         /* create textbox and add text */
         $textbox = imagettfbbox($font_size, 0, $font, $code);
-        $x = round(($this->width - $textbox[4]) / 2);
-        $y = round(($this->height - $textbox[5]) / 2);
+        $x = ($this->width - $textbox[4]) / 2;
+        $y = ($this->height - $textbox[5]) / 2;
         imagettftext($image, $font_size, 0, $x, $y, $text_color, $font, $code);
         /* output captcha image */
         $_SESSION['code'] = $code;
-
-        return $image;
+        header('Content-Type: image/png');
+        imagepng($image);
+        imagedestroy($image);
     }
 }

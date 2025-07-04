@@ -1,13 +1,5 @@
 <?php
 
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
-
 namespace System\Classes;
 
 use Closure;
@@ -20,21 +12,21 @@ use ReflectionParameter;
 
 class Container
 {
-    protected static $instance;
+    protected static mixed $instance;
 
-    protected $instances = [];
+    protected array $instances = [];
 
-    protected $bindings = [];
+    protected array $bindings = [];
 
     protected function __construct()
     {
         //
     }
 
-    public static function getInstance(): Container
+    public static function getInstance(): mixed
     {
         if (is_null(static::$instance)) {
-            static::$instance = new static;
+            static::$instance = new static();
         }
 
         return static::$instance;
@@ -47,7 +39,7 @@ class Container
         return $instance;
     }
 
-    public function bind($abstract, $concrete = null, $shared = false)
+    public function bind($abstract, $concrete = null, $shared = false): void
     {
         unset($this->instances[$abstract]);
 
@@ -66,11 +58,14 @@ class Container
         $this->bindings[$abstract] = compact('concrete', 'shared');
     }
 
-    public function singleton($abstract, $concrete = null)
+    public function singleton($abstract, $concrete = null): void
     {
-        return $this->bind($abstract, $concrete, true);
+        $this->bind($abstract, $concrete, true);
     }
 
+    /**
+     * @throws Exception
+     */
     public function make($abstract, $parameters = [])
     {
         if (isset($this->instances[$abstract])) {
@@ -96,6 +91,10 @@ class Container
         return $object;
     }
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     public function build($concrete, $parameters = [])
     {
         if ($concrete instanceof Closure) {
@@ -111,20 +110,29 @@ class Container
         $constructor = $reflector->getConstructor();
 
         if (is_null($constructor)) {
-            return new $concrete;
+            return new $concrete();
         }
 
         $dependencies = [];
-        $parameters = $constructor->getParameters();
+        $params = $constructor->getParameters();
 
-        foreach ($parameters as $parameter) {
+        foreach ($params as $parameter) {
+            $paramName = $parameter->getName();
             $result = null;
 
-            if (is_null($this->getParameterClassName($parameter))) {
+            // Use provided parameters if available
+            if (array_key_exists($paramName, $parameters)) {
+                $result = $parameters[$paramName];
+            } elseif (is_null($this->getParameterClassName($parameter))) {
                 if ($parameter->isDefaultValueAvailable()) {
                     $result = $parameter->getDefaultValue();
                 } elseif ($parameter->isVariadic()) {
                     $result = [];
+                } elseif ($parameter->hasType() && $parameter->getType()->isBuiltin()) {
+                    $typeName = $parameter->getType()->getName();
+                    if ($typeName === 'array') {
+                        $result = [];
+                    }
                 } else {
                     throw new Exception("Unresolvable dependency resolving [$parameter].");
                 }
@@ -143,7 +151,7 @@ class Container
             }
 
             if ($parameter->isVariadic()) {
-                $dependencies = array_merge($dependencies, $result);
+                $dependencies = array_merge($dependencies, (array)$result);
             } else {
                 $dependencies[] = $result;
             }
@@ -156,13 +164,13 @@ class Container
     {
         $type = $parameter->getType();
 
-        if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
+        if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
             return null;
         }
 
         $name = $type->getName();
 
-        if (! is_null($class = $parameter->getDeclaringClass())) {
+        if (!is_null($class = $parameter->getDeclaringClass())) {
             if ($name === 'self') {
                 return $class->getName();
             }
@@ -191,6 +199,10 @@ class Container
         }
     }
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     protected function callClosure(Closure $callable, array $parameters = [])
     {
         $reflector = new ReflectionFunction($callable);
@@ -201,6 +213,10 @@ class Container
         return $reflector->invokeArgs($newParameters);
     }
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     protected function callClass(array $callable, array $parameters = [])
     {
         $reflector = new ReflectionMethod($callable[0], $callable[1]);
@@ -217,8 +233,9 @@ class Container
      * @param ReflectionParameter[] $dependencies
      * @param array $parameters
      * @return array
+     * @throws Exception
      */
-    protected function getDependencies(array $dependencies, array $parameters)
+    protected function getDependencies(array $dependencies, array $parameters): array
     {
         $newParameters = [];
 

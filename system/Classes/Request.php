@@ -1,36 +1,27 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace System\Classes;
 
 class Request
 {
-    private $ip;
-    private $ipViaProxy = 0;
-    private $ipList = [];
-    private $userAgent;
-    private $isAjax;
-    private $isPost;
-
-    private $requestMethod;
-    private $allowedMethods = [
+    private string $ip;
+    private int $ipViaProxy = 0;
+    private array $ipList = [];
+    private string $userAgent = '';
+    private bool $isAjax = false;
+    private bool $isPost = false;
+    private string $requestMethod = '';
+    private array $allowedMethods = [
         'POST',
         'GET',
         'DELETE',
         'PUT',
         'HEAD',
     ];
-
-    private $floodCheck = 1;
-    private $floodInterval = 60;
-    private $floodLimit = 60;
+    private int $floodCheck = 1;
+    private int $floodInterval = 60;
+    private int $floodLimit = 60;
 
     public function __construct()
     {
@@ -41,7 +32,6 @@ class Request
         $this->processUserAgent();
         $this->processMethod();
         $this->detectPost();
-
         session_name('K_MVC');
         session_start();
     }
@@ -51,17 +41,17 @@ class Request
         return app(Auth::class);
     }
 
-    public function issetPost($name)
+    public function issetPost(string $name): bool
     {
-        return isset($_POST[$name]) ? true : false;
+        return isset($_POST[$name]);
     }
 
-    public function issetGet($name)
+    public function issetGet(string $name): bool
     {
-        return isset($_GET[$name]) ? true : false;
+        return isset($_GET[$name]);
     }
 
-    public function getVar($name, $default = '')
+    public function getVar(string $name, string $default = ''): string
     {
         $value = '';
         if (isset($_GET[$name])) {
@@ -72,7 +62,7 @@ class Request
         return $value;
     }
 
-    public function postVar($name, $default = '', $substr = 0)
+    public function postVar(string $name, string|int $default = '', int $substr = 0): string|int
     {
         $value = '';
 
@@ -85,7 +75,7 @@ class Request
         return $value;
     }
 
-    private function processVar($type, $value, $default, $substr = 0)
+    private function processVar(string $type, $value, $default, int $substr = 0)
     {
         switch ($type) {
             case 'integer':
@@ -117,47 +107,47 @@ class Request
         return $value;
     }
 
-    public function getIp()
+    public function getIp(): string
     {
         return $this->ip;
     }
 
-    public function getIpViaProxy()
+    public function getIpViaProxy(): int
     {
         return $this->ipViaProxy;
     }
 
-    public function getUserAgent()
+    public function getUserAgent(): string
     {
         return $this->userAgent;
     }
 
-    public function getIpList()
+    public function getIpList(): array
     {
         return $this->ipList;
     }
 
-    public function isAjax()
+    public function isAjax(): bool
     {
         return $this->isAjax;
     }
 
-    public function getAllowedMethods()
+    public function getAllowedMethods(): array
     {
         return $this->allowedMethods;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->requestMethod;
     }
 
-    public function isPost()
+    public function isPost(): bool
     {
         return $this->isPost;
     }
 
-    public function checkMethod($method = 'GET')
+    public function checkMethod(string $method = 'GET'): bool
     {
         return mb_strtoupper($method) === $this->getMethod();
     }
@@ -192,7 +182,7 @@ class Request
         $this->isPost = ('POST' === $this->getMethod());
     }
 
-    public function getRoute()
+    public function getRoute(): ?string
     {
         if (isset($_SERVER['REQUEST_URI'])) {
             $uri = trim($_SERVER['REQUEST_URI']);
@@ -204,6 +194,7 @@ class Request
 
             return $uri === '/' ? $uri : trim($uri, '/');
         }
+        return null;
     }
 
     private function processIp()

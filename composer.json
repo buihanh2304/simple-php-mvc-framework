@@ -1,5 +1,5 @@
 {
-    "name": "buihanh2304/simple-php-mvc-framework",
+    "name": "cuzinxyz/simple-php-mvc-framework",
     "description": "A simple PHP MVC Framework",
     "keywords": [
         "php",
@@ -13,6 +13,7 @@
     "require": {
         "php": "^8.0",
         "ext-gd": "*",
+        "catfan/medoo": "^2.2",
         "league/plates": "3.*",
         "vlucas/phpdotenv": "^5.5"
     },
@@ -29,5 +30,8 @@
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ]
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.39"
     }
 }

@@ -1,23 +1,16 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace System\Classes;
 
-use PDO;
+use Medoo\Medoo;
 
 class Auth
 {
-    public $id = 0;
-    public $rights = 0;
-    public $isLogin = false;
-    public $user = [
+    public int $id = 0;
+    public int $rights = 0;
+    public bool $isLogin = false;
+    public array $user = [
         'id' => 0,
         'account' => '',
         'password' => '',
@@ -27,21 +20,19 @@ class Auth
         'last_login' => 0,
         'name' => '',
     ];
+    public mixed $settings;
 
-    public $settings;
-
-    public function __construct(protected PDO $db)
+    public function __construct(protected Medoo $db)
     {
         $this->authorize();
     }
 
-    private function authorize()
+    private function authorize(): void
     {
         $id = 0;
         $password = '';
-
         if (isset($_SESSION['uid']) && isset($_SESSION['ups'])) {
-            $id = intval(trim($_SESSION['uid']));
+            $id = intval(trim((string)$_SESSION['uid']));
             $password = trim($_SESSION['ups']);
         } elseif (isset($_COOKIE['cuid']) && isset($_COOKIE['cups'])) {
             $id = intval(base64_decode(trim($_COOKIE['cuid'])));
@@ -49,23 +40,15 @@ class Auth
             $_SESSION['uid'] = $id;
             $_SESSION['ups'] = $password;
         }
-
         if ($id && $password) {
-            $stmt = $this->db->prepare('SELECT * FROM `users` WHERE `id` = ? LIMIT 1');
-            $stmt->execute([$id]);
-            $user = $stmt->fetch();
-
+            $user = $this->db->get('users', '*', ['id' => $id]);
             if ($user) {
                 if ($password === $user['password']) {
                     $this->isLogin = true;
                     $this->id = (int) $user['id'];
                     $this->rights = (int) $user['rights'];
                     $this->user = $user;
-
-                    $this->db->prepare('UPDATE `users` SET
-                        `last_login`   = ?
-                        WHERE `id` = ? LIMIT 1
-                    ')->execute([TIME, $user['id']]);
+                    $this->db->update('users', ['last_login' => TIME], ['id' => $user['id']]);
                 } else {
                     $this->unset();
                 }
@@ -75,7 +58,7 @@ class Auth
         }
     }
 
-    private function unset()
+    private function unset(): void
     {
         unset($_SESSION['uid']);
         unset($_SESSION['ups']);

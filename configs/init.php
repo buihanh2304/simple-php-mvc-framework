@@ -1,15 +1,7 @@
 <?php
 
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
-
 // URL
-define('SITE_SCHEME', env('SITE_SCHEME', 'http://'));
+define('SITE_SCHEME', env('SITE_SCHEME', 'https://'));
 define('SITE_HOST', env('SITE_HOST', 'localhost'));
 define('SITE_PATH', env('SITE_PATH', ''));
 define('SITE_URL', SITE_SCHEME . SITE_HOST . SITE_PATH);

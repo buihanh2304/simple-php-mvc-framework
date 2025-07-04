@@ -20,7 +20,7 @@ $this->layout('user/container');
                         <div class="col-12">
                             <div class="form-check">
                                 <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" name="remember" value="1"<?php echo ($inputRemember ? ' checked="checked"' : ''); ?> /> Ghi nhớ
+                                    <input class="form-check-input" type="checkbox" name="remember" value="1"<?php echo($inputRemember ? ' checked="checked"' : ''); ?> /> Ghi nhớ
                                 </label>
                             </div>
                         </div>

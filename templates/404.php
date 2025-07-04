@@ -1,5 +1,5 @@
 <?php
-    $this->layout('layout');
+$this->layout('layout');
 ?>
 
 <div class="jumbotron text-center">

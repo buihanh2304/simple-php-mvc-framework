@@ -1,5 +1,5 @@
 <?php
-    $this->layout('home/container');
+$this->layout('home/container');
 ?>
 <div class="jumbotron">
   <h1 class="display-4">Xin chào!</h1>

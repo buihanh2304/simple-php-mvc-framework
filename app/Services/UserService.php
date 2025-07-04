@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
 // This file is a part of K-MVC
@@ -12,7 +13,7 @@ namespace App\Services;
 
 class UserService
 {
-    public function validateEmail($email)
+    public function validateEmail(string $email): string|false
     {
         if (empty($email)) {
             return 'Địa chỉ email không được để trống';
@@ -31,7 +32,7 @@ class UserService
         return false;
     }
 
-    public function validateAccount($account)
+    public function validateAccount(string $account): string|false
     {
         if (empty($account)) {
             return 'Tên tài khoản không được để trống';
@@ -62,8 +63,7 @@ class UserService
         return false;
     }
 
-
-    public function validatePassword($password)
+    public function validatePassword(string $password): string|false
     {
         if (empty($password)) {
             return 'Mật khẩu không được để trống';
@@ -78,7 +78,7 @@ class UserService
         return false;
     }
 
-    public function validatePasswordConfirmation($password, $passwordConfirmation)
+    public function validatePasswordConfirmation(string $password, string $passwordConfirmation): string|false
     {
         if ($password !== $passwordConfirmation) {
             return 'Mật khẩu không trùng khớp';
@@ -87,7 +87,7 @@ class UserService
         return false;
     }
 
-    public function validateName($name)
+    public function validateName(string $name): string|false
     {
         if (empty($name)) {
             return 'Tên hiển thị không được để trống';
@@ -105,5 +105,4 @@ class UserService
 
         return false;
     }
-
 }

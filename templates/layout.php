@@ -50,7 +50,7 @@
         </header>
         <main>
             <div class="container">
-<?=         $this->section('content')?>
+                <?= $this->section('content') ?>
             </div>
         </main>
         <footer>

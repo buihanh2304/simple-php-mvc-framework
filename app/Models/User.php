@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
 // This file is a part of K-MVC
@@ -14,7 +15,7 @@ use System\Classes\Model;
 
 class User extends Model
 {
-    public function logout()
+    public function logout(): void
     {
         setcookie('cuid', '', TIME - 60, COOKIE_PATH);
         setcookie('cups', '', TIME - 60, COOKIE_PATH);
@@ -22,34 +23,36 @@ class User extends Model
         unset($_SESSION['ups']);
     }
 
-    // check if user exits for login
-    public function getForLogin($type, $email)
+    // check if user exists for login
+    public function getForLogin(string $type, string $email): array|false
     {
-        $stmt = $this->db->prepare('SELECT `id`, `password` FROM `users` WHERE `' . $type . '` = ? LIMIT 1');
-        $stmt->execute([$email]);
-        return $stmt->fetch();
+        return $this->db->get('users', '*', [
+            $type => $email
+        ]);
     }
 
-    // check if account or email is exists for register
-    public function checkUsedInfo($account, $email) {
-        $stmt = $this->db->prepare('SELECT `account`, `email` FROM `users` WHERE REPLACE(`account`, ".", "") = :account OR `email` = :email LIMIT 1');
-        $stmt->execute(['account' => str_replace('.', '', $account), 'email' => $email]);
-        $data = $stmt->fetch();
-
-        return $data;
+    // check if account or email is existing for register
+    public function checkUsedInfo(string $account, string $email): array|false
+    {
+        // Check by email first
+        $user = $this->db->get('users', ['account', 'email'], ['email' => $email]);
+        if ($user) {
+            return $user;
+        }
+        // Check by account (ignoring dots)
+        $users = $this->db->select('users', ['account', 'email']);
+        foreach ($users as $u) {
+            if (str_replace('.', '', $u['account']) === str_replace('.', '', $account)) {
+                return $u;
+            }
+        }
+        return false;
     }
 
     // register
-    public function register($account, $password, $email)
+    public function register(string $account, string $password, string $email): bool|string
     {
-        $stmt = $this->db->prepare('INSERT INTO `users` SET
-            `account`      = :account,
-            `password`     = :password,
-            `email`        = :email,
-            `join_date`    = :join_date,
-            `last_login`   = :last_login
-        ');
-        $stmt->execute([
+        $this->db->insert('users', [
             'account'      => $account,
             'password'     => md5(md5($password)),
             'email'        => $email,
@@ -57,6 +60,6 @@ class User extends Model
             'last_login'   => TIME
         ]);
 
-        return $this->db->lastInsertId();
+        return $this->db->id();
     }
 }

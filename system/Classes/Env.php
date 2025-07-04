@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace System\Classes;
 
@@ -20,7 +21,7 @@ class Env
      *
      * @return \Dotenv\Repository\RepositoryInterface
      */
-    public static function getRepository()
+    public static function getRepository(): \Dotenv\Repository\RepositoryInterface
     {
         if (static::$repository === null) {
             $builder = RepositoryBuilder::createWithDefaultAdapters();
@@ -40,7 +41,7 @@ class Env
      * @param  mixed  $default
      * @return mixed
      */
-    public static function get($key, $default = null)
+    public static function get(string $key, mixed $default = null): mixed
     {
         return Option::fromValue(static::getRepository()->get($key))
             ->map(function ($value) {
@@ -56,15 +57,10 @@ class Env
                         return '';
                     case 'null':
                     case '(null)':
-                        return;
-                }
-
-                if (preg_match('/\A([\'"])(.*)\1\z/', $value, $matches)) {
-                    return $matches[2];
+                        return null;
                 }
 
                 return $value;
-            })
-            ->getOrCall(fn () => value($default));
+            })->getOrCall(fn () => $default);
     }
 }

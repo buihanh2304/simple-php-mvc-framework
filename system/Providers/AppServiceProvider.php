@@ -2,7 +2,6 @@
 
 namespace System\Providers;
 
-use PDO;
 use System\Classes\Auth;
 use System\Classes\Captcha;
 use System\Classes\Config;
@@ -29,7 +28,7 @@ class AppServiceProvider implements ServiceProviderInterface
         $this->container->bind(Captcha::class, null, true);
         $this->container->bind(Config::class, null, true);
         $this->container->bind(Controller::class, null, true);
-        $this->container->bind(PDO::class, DB::class, true);
+        $this->container->bind(\Medoo\Medoo::class, DB::class, true);
         $this->container->bind(Kernel::class, null, true);
         $this->container->bind(Model::class, null, true);
         $this->container->bind(Request::class, null, true);

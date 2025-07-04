@@ -1,16 +1,9 @@
 <?php
 
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
-
 use App\Controllers\HomeController;
+use System\Classes\Router;
 
-/** @var \System\Classes\Router $router */
+/** @var Router $router */
 
 $router->add('/', 'HomeController@index');
 

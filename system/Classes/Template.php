@@ -1,12 +1,5 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace System\Classes;
 
@@ -16,9 +9,8 @@ use League\Plates\Extension\Asset;
 class Template
 {
     private Engine $plates;
-
-    private $global = [];
-    private $data = [];
+    private array $global = [];
+    private array $data = [];
 
     public function __construct(Auth $auth, Engine $engine)
     {
@@ -29,8 +21,6 @@ class Template
             'user'               => $auth->user,
             'rights'             => $auth->rights
         ]);
-
-        // Load extensions
         $this->plates = $engine;
     }
 
@@ -39,56 +29,39 @@ class Template
         return $this->plates;
     }
 
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->addGlobal('page_title', _e($title));
-
         return $this;
     }
 
-    public function addGlobal($name, $value = '')
+    public function addGlobal(string $name, mixed $value = ''): static
     {
         $data = $this->processData($name, $value);
         $this->global = array_merge($this->global, $data);
-
         return $this;
     }
 
-    public function addData($name, $value = '')
+    public function addData(string $name, mixed $value = ''): static
     {
         $data = $this->processData($name, $value);
         $this->data = array_merge($this->data, $data);
-
         return $this;
     }
 
-    private function processData($name, $value)
+    private function processData(string $name, mixed $value): array
     {
         $data = [];
-
         if (is_array($name)) {
-            foreach ($name as $key => $val) {
-                $data[$key] = $val;
-            }
+            $data = $name;
         } else {
             $data[$name] = $value;
         }
-
         return $data;
     }
 
-    public function render($file, $data = [])
+    public function render(string $template, array $data = []): string
     {
-        if (!empty($this->global)) {
-            $this->plates->addData($this->global);
-        }
-        $this->data = array_merge($this->data, $data);
-
-        return $this->plates->render($file, $this->data);
-    }
-
-    public function output($file, $data = [])
-    {
-        echo $this->render($file, $data);
+        return $this->plates->render($template, array_merge($this->global, $this->data, $data));
     }
 }

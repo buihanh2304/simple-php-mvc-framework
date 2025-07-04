@@ -1,26 +1,15 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace System\Classes;
 
 class Router
 {
-    private $basePath = '';
-
-    private $routes = [];
-
-    protected $namespace;
-
-    private $allowedMethods = [];
-
-    private $patternMatchers = [
+    private string $basePath = '';
+    private array $routes = [];
+    protected ?string $namespace = null;
+    private array $allowedMethods = [];
+    private array $patternMatchers = [
         '/{:(number|id|word|slug)}/' => '{$1:$1}',
         '/{(.+?):number}/' => '{$1:[0-9]+?}',
         '/{(.+?):id}/' => '{$1:[1-9][0-9]*?}',
@@ -28,41 +17,35 @@ class Router
         '/{(.+?):slug}/' => '{$1:[a-z0-9-]+?}',
         '/{([^:]+?)}/' => '{$1:[^/]+?}',
     ];
+    private string $regexDelimiter = '#';
+    private int $patternIndex = 0;
+    private array $patternData = [];
+    private array $requestParams = [];
 
-    private $regexDelimiter = '#';
-
-    private $patternIndex = 0;
-
-    private $patternData = [];
-
-    private $requestParams = [];
-
-    public function __construct($basePath = '', array $allowedMethods = ['GET', 'POST'])
+    public function __construct(string $basePath = '', array $allowedMethods = ['GET', 'POST'])
     {
         $this->basePath = $basePath;
         $this->allowedMethods = $allowedMethods;
-
         foreach ($this->allowedMethods as $method) {
             $this->routes[$method] = [];
         }
     }
 
-    public function setAllowedMethods(array $methods)
+    public function setAllowedMethods(array $methods): void
     {
         $this->allowedMethods = $methods;
     }
 
-    public function setBasePath($basePath)
+    public function setBasePath(string $basePath): void
     {
         $this->basePath = $basePath;
     }
 
-    public function add(string $router, $handler, $methods = 'GET')
+    public function add(string $router, mixed $handler, string|array $methods = 'GET'): void
     {
         $pattern = $this->processRouter($router);
         $handler = $this->processHandler($handler);
         $methods = $this->processMethod($methods);
-
         foreach ($methods as $method) {
             $this->routes[$method][$pattern] = $handler;
         }

@@ -1,12 +1,5 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -25,13 +18,13 @@ class UserController extends Controller
         //
     }
 
-    public function logout()
+    public function logout(): void
     {
         $this->userModel->logout();
         redirect('/');
     }
 
-    public function login(Request $request)
+    public function login(Request $request): string
     {
         if ($request->user()->isLogin) {
             redirect('/');
@@ -40,7 +33,7 @@ class UserController extends Controller
         $error = false;
         $email = $request->postVar('email', '');
         $password = $request->postVar('password', '');
-        $remember = $request->postVar('remember', 0);
+        $remember = $request->postVar('remember', default: 0);
 
         if ($request->getMethod() === 'POST') {
             if (empty($email) || empty($password)) {
@@ -63,14 +56,13 @@ class UserController extends Controller
 
                 if (!$error) {
                     $user = $this->userModel->getForLogin($type, $email);
-
                     if ($user && md5(md5($password)) === $user['password']) {
                         $_SESSION['uid'] = $user['id'];
                         $_SESSION['ups'] = $user['password'];
 
                         if ($remember) {
                             // Save cookie (365 day)
-                            setcookie('cuid', base64_encode($user['id']), TIME + 31536000, COOKIE_PATH);
+                            setcookie('cuid', base64_encode((string) $user['id']), TIME + 31536000, COOKIE_PATH);
                             setcookie('cups', md5($password), TIME + 31536000, COOKIE_PATH);
                         }
                         redirect('/');
@@ -89,7 +81,7 @@ class UserController extends Controller
             ]);
     }
 
-    public function register(Request $request)
+    public function register(Request $request): string
     {
         if ($request->user()->isLogin) {
             redirect('/');

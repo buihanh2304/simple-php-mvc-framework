@@ -1,25 +1,18 @@
 <?php
-
-/*
-// This file is a part of K-MVC
-// version: 2.x
-// author: MrKen
-// website: https://vdevs.net
-// github: https://github.com/buihanh2304/simple-php-mvc-framework
-*/
+declare(strict_types=1);
 
 namespace System\Classes;
 
-use PDO;
+use Medoo\Medoo;
 
 class Model
 {
-    protected PDO $db;
+    protected Medoo $db;
     protected Config $config;
 
     public function __construct()
     {
-        $this->db = app(DB::class);
+        $this->db = app(Medoo::class);
         $this->config = app(Config::class);
     }
 }

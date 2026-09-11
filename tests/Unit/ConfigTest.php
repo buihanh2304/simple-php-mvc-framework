@@ -38,6 +38,10 @@ class ConfigTest extends TestCase
     {
         $this->assertIsString($this->config->get('system.app.name'));
         $this->assertNotSame('', $this->config->get('system.app.name'));
+        $this->assertIsString($this->config->get('system.log.path'));
+        $this->assertNotSame('', $this->config->get('system.log.path'));
+        $this->assertIsString($this->config->get('system.log.level'));
+        $this->assertNotSame('', $this->config->get('system.log.level'));
     }
 
     public function testGetReturnsDefaultWhenPathIsMissing(): void

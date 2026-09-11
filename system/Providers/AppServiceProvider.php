@@ -10,6 +10,7 @@ use System\Classes\Container;
 use System\Classes\Controller;
 use System\Classes\DB;
 use System\Classes\Kernel;
+use System\Classes\Logger;
 use System\Classes\Model;
 use System\Classes\Request;
 use System\Classes\Router;
@@ -31,6 +32,7 @@ class AppServiceProvider implements ServiceProviderInterface
         $this->container->bind(Controller::class, null, true);
         $this->container->bind(PDO::class, DB::class, true);
         $this->container->bind(Kernel::class, null, true);
+        $this->container->bind(Logger::class, null, true);
         $this->container->bind(Model::class, null, true);
         $this->container->bind(Request::class, null, true);
         $this->container->bind(Router::class, null, true);

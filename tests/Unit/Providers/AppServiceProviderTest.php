@@ -8,6 +8,7 @@ use System\Classes\Auth;
 use System\Classes\Captcha;
 use System\Classes\Config;
 use System\Classes\Kernel;
+use System\Classes\Logger;
 use System\Classes\Router;
 use System\Classes\Template;
 use System\Providers\AppServiceProvider;
@@ -25,6 +26,7 @@ class AppServiceProviderTest extends TestCase
         $auth = $this->container()->make(Auth::class);
         $captcha = $this->container()->make(Captcha::class);
         $kernel = $this->container()->make(Kernel::class);
+        $logger = $this->container()->make(Logger::class);
         $template = $this->container()->make(Template::class);
 
         $this->assertSame($router, $this->container()->make(Router::class));
@@ -32,7 +34,9 @@ class AppServiceProviderTest extends TestCase
         $this->assertSame($auth, $this->container()->make(Auth::class));
         $this->assertSame($captcha, $this->container()->make(Captcha::class));
         $this->assertSame($kernel, $this->container()->make(Kernel::class));
+        $this->assertSame($logger, $this->container()->make(Logger::class));
         $this->assertSame($template, $this->container()->make(Template::class));
+        $this->assertInstanceOf(Logger::class, $logger);
         $this->assertFalse($auth->isLogin);
     }
 }

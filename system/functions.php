@@ -128,7 +128,7 @@ if (!function_exists('pagination')) {
             return;
         }
 
-        $max_page = ceil($total / $perPage);
+        $max_page = (int) ceil($total / $perPage);
 
         if ($page > $max_page) {
             $page = $max_page;

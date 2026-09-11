@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace System\Providers;
 
 use System\Classes\Router;
 use System\Interfaces\ServiceProviderInterface;

@@ -31,6 +31,7 @@ class Request
     private $floodCheck = 1;
     private $floodInterval = 60;
     private $floodLimit = 60;
+    private $floodRecordSize = 20;
 
     public function __construct()
     {
@@ -208,7 +209,7 @@ class Request
 
     private function processIp()
     {
-        $this->ip = filter_var($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', FILTER_VALIDATE_IP);
+        $this->ip = $this->normalizeIp($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
 
         if ($this->ip === false) {
             die('Invalid IP');
@@ -217,17 +218,82 @@ class Request
 
     private function processIpViaProxy()
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', $_SERVER['HTTP_X_FORWARDED_FOR'], $vars)) {
-            foreach ($vars[0] as $var) {
-                $var = filter_var($var, FILTER_VALIDATE_IP);
+        if (!isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return;
+        }
 
-                if ($var && $var != $this->ip && !preg_match('#^(10|172\.16|192\.168)\.#', $var)) {
-                    $this->ipViaProxy = $var;
+        foreach ($this->parseForwardedIps($_SERVER['HTTP_X_FORWARDED_FOR']) as $ip) {
+            if ($ip !== $this->ip && $this->isPublicIp($ip)) {
+                $this->ipViaProxy = $ip;
 
-                    break;
-                }
+                break;
             }
         }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function parseForwardedIps(string $header): array
+    {
+        $ips = [];
+
+        foreach (explode(',', $header) as $part) {
+            $part = trim($part);
+
+            if ($part === '') {
+                continue;
+            }
+
+            if (preg_match('/^\[(.+)\](?::\d+)?$/', $part, $matches)) {
+                $part = $matches[1];
+            } elseif (preg_match('/^(\d{1,3}(?:\.\d{1,3}){3}):\d+$/', $part, $matches)) {
+                $part = $matches[1];
+            }
+
+            $ip = $this->normalizeIp($part);
+
+            if ($ip !== false) {
+                $ips[] = $ip;
+            }
+        }
+
+        return $ips;
+    }
+
+    /**
+     * @return string|false
+     */
+    private function normalizeIp($ip)
+    {
+        $ip = trim((string) $ip);
+
+        if ($ip !== '' && $ip[0] === '[' && substr($ip, -1) === ']') {
+            $ip = substr($ip, 1, -1);
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            return false;
+        }
+
+        $binary = inet_pton($ip);
+
+        if ($binary === false) {
+            return false;
+        }
+
+        if (strlen($binary) === 16 && strncmp($binary, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff", 12) === 0) {
+            $binary = substr($binary, 12);
+        }
+
+        $normalized = inet_ntop($binary);
+
+        return $normalized === false ? false : $normalized;
+    }
+
+    private function isPublicIp(string $ip): bool
+    {
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false;
     }
 
     private function processUserAgent()
@@ -256,34 +322,70 @@ class Request
 
             flock($in, LOCK_EX) or die('Cannot flock ANTIFLOOD file.');
 
-            while ($block = fread($in, 8)) {
-                $arr = unpack('Lip/Ltime', $block);
+            $ipBinary = $this->ipToBinary();
+            clearstatcache(true, $file);
 
-                if ((TIME - $arr['time']) > $this->floodInterval) {
-                    continue;
+            if (filesize($file) % $this->floodRecordSize === 0) {
+                while ($block = fread($in, $this->floodRecordSize)) {
+                    if (strlen($block) !== $this->floodRecordSize) {
+                        break;
+                    }
+
+                    $storedIp = substr($block, 0, 16);
+                    $time = unpack('Ltime', substr($block, 16, 4))['time'];
+
+                    if ((TIME - $time) > $this->floodInterval) {
+                        continue;
+                    }
+
+                    if ($storedIp === $ipBinary) {
+                        $requests++;
+                    }
+
+                    $tmp[] = ['ip' => $storedIp, 'time' => $time];
+                    $this->ipList[] = $this->binaryToIp($storedIp);
                 }
-
-                if ($arr['ip'] == $this->ip) {
-                    $requests++;
-                }
-
-                $tmp[] = $arr;
-                $this->ipList[] = $arr['ip'];
             }
 
             fseek($in, 0);
             ftruncate($in, 0);
 
             for ($i = 0; $i < count($tmp); $i++) {
-                fwrite($in, pack('LL', $tmp[$i]['ip'], $tmp[$i]['time']));
+                fwrite($in, $tmp[$i]['ip'] . pack('L', $tmp[$i]['time']));
             }
 
-            fwrite($in, pack('LL', $this->ip, TIME));
+            fwrite($in, $ipBinary . pack('L', TIME));
             fclose($in);
 
             if ($requests > $this->floodLimit) {
                 die('FLOOD: exceeded limit of allowed requests');
             }
         }
+    }
+
+    private function ipToBinary(): string
+    {
+        $binary = inet_pton((string) $this->ip);
+
+        if ($binary === false) {
+            $binary = inet_pton('0.0.0.0');
+        }
+
+        if (strlen($binary) === 4) {
+            return str_repeat("\x00", 10) . "\xff\xff" . $binary;
+        }
+
+        return $binary;
+    }
+
+    private function binaryToIp(string $binary): string
+    {
+        if (strlen($binary) === 16 && strncmp($binary, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff", 12) === 0) {
+            $binary = substr($binary, 12);
+        }
+
+        $ip = inet_ntop($binary);
+
+        return $ip === false ? '' : $ip;
     }
 }

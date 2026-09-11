@@ -8,9 +8,9 @@
 // github: https://github.com/buihanh2304/simple-php-mvc-framework
 */
 
-use App\Providers\RouteServiceProvider;
 use System\Providers\AppServiceProvider;
 use System\Providers\CaptchaServiceProvider;
+use System\Providers\RouteServiceProvider;
 
 return [
     AppServiceProvider::class,

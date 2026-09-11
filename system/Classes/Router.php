@@ -70,6 +70,8 @@ class Router
 
     public function match($method, $route)
     {
+        $this->requestParams = [];
+
         if ($this->basePath) {
             $route = preg_replace(
                 $this->regexDelimiter . '^' . preg_quote($this->basePath, $this->regexDelimiter) . $this->regexDelimiter,

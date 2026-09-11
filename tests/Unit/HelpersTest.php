@@ -83,6 +83,32 @@ class HelpersTest extends TestCase
         putenv('K_MVC_HELPER_ENV');
     }
 
+    public function testLoggerHelperReturnsLoggerInstanceWhenCalledWithoutArguments(): void
+    {
+        $directory = sys_get_temp_dir() . DS . 'k-mvc-helper-logger-' . uniqid('', true);
+        $logger = new \System\Classes\Logger($directory);
+        $this->container()->instance(\System\Classes\Logger::class, $logger);
+
+        $this->assertSame($logger, logger());
+
+        $this->removeTempDirectory($directory);
+    }
+
+    public function testLoggerHelperWritesInfoMessage(): void
+    {
+        $directory = sys_get_temp_dir() . DS . 'k-mvc-helper-logger-' . uniqid('', true);
+        $logger = new \System\Classes\Logger($directory);
+        $this->container()->instance(\System\Classes\Logger::class, $logger);
+
+        $returned = logger('Hello {name}', ['name' => 'world']);
+        $contents = (string) file_get_contents($directory . DS . date('Y-m-d') . '.log');
+
+        $this->assertSame($logger, $returned);
+        $this->assertStringContainsString('INFO: Hello world', $contents);
+
+        $this->removeTempDirectory($directory);
+    }
+
     public function testPaginationReturnsNothingWhenAllItemsFitOnOnePage(): void
     {
         $page = 3;
@@ -173,5 +199,18 @@ class HelpersTest extends TestCase
         $request = $this->makeRequest();
 
         $this->assertSame($request, request());
+    }
+
+    private function removeTempDirectory(string $directory): void
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        foreach (glob($directory . DS . '*') ?: [] as $file) {
+            @unlink($file);
+        }
+
+        @rmdir($directory);
     }
 }

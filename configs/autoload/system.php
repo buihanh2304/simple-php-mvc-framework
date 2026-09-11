@@ -12,4 +12,8 @@ return [
     'app' => [
         'name' => env('APP_NAME', 'K-MVC'),
     ],
+    'log' => [
+        'path' => env('LOG_PATH', SYSTEM . 'files' . DS . 'logs'),
+        'level' => env('LOG_LEVEL', 'debug'),
+    ],
 ];

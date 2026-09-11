@@ -25,3 +25,5 @@ composer create-project buihanh2304/simple-php-mvc-framework
 ### 9. [Container](./09.container.md)
 
 ### 10. [Configs](./10.configs.md)
+
+### 11. [Logger](./11.logger.md)

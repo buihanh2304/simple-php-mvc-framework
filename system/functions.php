@@ -11,6 +11,7 @@
 use System\Classes\Config;
 use System\Classes\Container;
 use System\Classes\Env;
+use System\Classes\Logger;
 use System\Classes\Request;
 use System\Classes\Template;
 
@@ -101,6 +102,29 @@ if (!function_exists('env')) {
     function env($key, $default = null)
     {
         return Env::get($key, $default);
+    }
+}
+
+if (!function_exists('logger')) {
+    /**
+     * Get logger instance or write an info message
+     *
+     * @param string|null $message
+     * @param array $context
+     * @return Logger
+     */
+    function logger(string $message = null, array $context = [])
+    {
+        /** @var Logger */
+        $logger = app(Logger::class);
+
+        if (is_null($message)) {
+            return $logger;
+        }
+
+        $logger->info($message, $context);
+
+        return $logger;
     }
 }
 
